@@ -1,0 +1,1751 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Green Corner</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: "Comic Sans MS", "Segoe UI", sans-serif; background: #e9f5ee;
+         margin: 0; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
+  .phone { width: 100%; max-width: 380px; background: linear-gradient(160deg, #eafff3, #fdf6e3);
+           border-radius: 32px; border: 6px solid #2d6a4f; min-height: 660px;
+           padding: 24px 18px; box-shadow: 6px 6px 0 #2d6a4f33; position: relative; overflow: hidden; }
+
+  .screen { display: none; opacity: 0; transition: opacity 0.25s ease; }
+  .screen.active { display: block; opacity: 1; }
+
+  .home-btn { position: absolute; top: 12px; right: 12px; width: 34px; height: 34px;
+              border-radius: 50%; background: #fff; border: 2px solid #52b788; color: #2d6a4f;
+              font-size: 16px; display: flex; align-items: center; justify-content: center;
+              cursor: pointer; box-shadow: 0 2px 0 #2d6a4f33; z-index: 50; padding: 0; }
+
+  .diem-hien-thi { position: absolute; top: 12px; left: 12px; background: #fff3ea;
+                    border: 2px solid #f4a261; color: #bb5b1f; font-size: 12px; font-weight: bold;
+                    border-radius: 999px; padding: 5px 12px; }
+  .diem-hien-thi.diem-goc { position: static; display: inline-block; margin-bottom: 6px; }
+
+  .mascot { font-size: 64px; text-align: center; margin-top: 20px; animation: bounce 2s ease-in-out infinite; }
+  @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+  .app-name { font-size: 32px; font-weight: bold; color: #2d6a4f; text-align: center; margin-top: 6px; }
+  .tagline { font-size: 15px; color: #52796f; text-align: center; margin: 8px 0 18px; line-height: 1.5; }
+  .story-box { background: #fff; border: 3px dashed #95d5b2; border-radius: 16px; padding: 12px 14px;
+               font-size: 13px; color: #2d6a4f; line-height: 1.6; margin-bottom: 20px; }
+
+  h2.title { color: #2d6a4f; font-size: 20px; text-align: center; margin: 4px 0 14px; }
+  p.hint { font-size: 14px; color: #52796f; text-align: center; margin: 0 0 16px; line-height: 1.5; }
+
+  button { font-family: inherit; font-size: 17px; border: none; border-radius: 18px;
+           padding: 13px; cursor: pointer; width: 100%; transition: transform 0.1s ease; }
+  button:active { transform: scale(0.96); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary { background: #52b788; color: #fff; box-shadow: 0 4px 0 #2d6a4f; margin-bottom: 10px; }
+  .btn-secondary { background: #fff; color: #2d6a4f; border: 2px solid #95d5b2; margin-bottom: 10px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tile { border-radius: 20px; padding: 18px 10px; text-align: center; cursor: pointer;
+          border: 3px solid rgba(0,0,0,0.06); background: #fff; }
+  .tile:active { transform: scale(0.95); }
+  .tile.active { border-color: #2d6a4f; box-shadow: 0 0 0 3px #52b78855; }
+  .tile { position: relative; }
+  .tile .huy-hieu-thu-tu { position: absolute; top: 6px; left: 6px; width: 24px; height: 24px;
+                            border-radius: 50%; background: #2d6a4f; color: #fff; font-size: 13px;
+                            font-weight: bold; display: flex; align-items: center; justify-content: center; }
+  .tile.da-chon { opacity: 0.55; }
+  .tile .emoji { font-size: 34px; }
+  .tile .label { font-size: 14px; font-weight: bold; color: #264653; margin-top: 6px; }
+  .tile .sub { font-size: 11px; color: #6d6875; margin-top: 2px; }
+  .t-blue { background: #bde0fe; } .t-green { background: #b7e4c7; } .t-yellow { background: #ffe066; }
+
+  .khuvuc-header { text-align: center; margin-bottom: 10px; }
+  .khuvuc-header .emoji { font-size: 44px; }
+  .khuvuc-header .ten { font-size: 20px; font-weight: bold; color: #2d6a4f; }
+
+  .loading-box { text-align: center; margin-top: 50px; }
+  .loading-box .emoji { font-size: 56px; animation: bounce 1.4s ease-in-out infinite; }
+  .loading-box p { color: #52796f; font-size: 14px; margin-top: 10px; }
+
+  .am-thanh-row { background: #fff; border-radius: 16px; padding: 12px 14px; margin-bottom: 10px;
+                  border: 3px solid rgba(0,0,0,0.06); }
+  .am-thanh-row .hang-tren { display: flex; align-items: center; justify-content: space-between; }
+  .am-thanh-row .nhan { font-size: 15px; font-weight: bold; color: #264653; }
+  .am-thanh-row button { width: auto; padding: 8px 16px; font-size: 14px; }
+  .am-thanh-row .trang-thai { font-size: 12px; color: #f4a261; min-height: 16px; margin-top: 4px; }
+  #tuantra-tien-do { color: #bb5b1f; font-weight: bold; font-size: 13px; }
+
+  .muc-luc-btn { background: #fff3ea; color: #bb5b1f; border: 2px dashed #f4a261;
+                 font-size: 13px; padding: 8px; margin: 4px 0 16px; }
+
+  .overlay { position: absolute; inset: 0; background: rgba(11,17,32,0.75); z-index: 100;
+             display: none; align-items: center; justify-content: center; padding: 20px; }
+  .overlay.active { display: flex; }
+  .overlay-card { background: #fdf6e3; border-radius: 20px; padding: 18px; max-height: 90%;
+                  overflow-y: auto; border: 4px solid #2d6a4f; }
+  .overlay-card h3 { color: #2d6a4f; margin-top: 0; font-size: 17px; text-align: center; }
+  .muc-luc-loai { font-size: 13px; color: #264653; margin-bottom: 10px; line-height: 1.6; }
+  .muc-luc-loai b { color: #2d6a4f; }
+
+  canvas.canh-quan { width: 100%; max-width: 340px; height: 170px; border-radius: 14px;
+                     display: block; margin: 0 auto 12px; border: 3px solid #95d5b2; }
+
+  .chon-nhom-tieude { font-size: 14px; font-weight: bold; color: #264653; margin: 14px 0 6px; }
+  .chon-hang { display: flex; gap: 8px; margin-bottom: 4px; }
+  .chon-o { flex: 1; background: #fff; border: 2px solid #e0ded0; border-radius: 14px;
+            padding: 10px 4px; text-align: center; cursor: pointer; }
+  .chon-o:active { transform: scale(0.96); }
+  .chon-o .emoji { font-size: 24px; display: block; margin-bottom: 3px; }
+  .chon-o .nhan { font-size: 11px; color: #264653; line-height: 1.3; display: block; }
+  .chon-o .phu { font-size: 9px; color: #8a9a94; display: block; margin-top: 1px; }
+  .chon-o.active { border-color: #52b788; background: #d8f3dc; }
+  .chon-o.active .nhan { font-weight: bold; color: #2d6a4f; }
+
+  .hochoi-card { background: #fff; border: 3px solid #95d5b2; border-radius: 16px;
+                 padding: 12px 14px; margin-bottom: 12px; font-size: 13px; color: #264653; line-height: 1.6; }
+  .hochoi-card h4 { margin: 0 0 6px; color: #2d6a4f; font-size: 14px; }
+
+  .so-sanh-row { display: flex; gap: 10px; }
+  .so-sanh-cot { flex: 1; text-align: center; }
+  .so-sanh-cot h4 { font-size: 12px; color: #2d6a4f; margin: 0 0 4px; }
+  canvas.canh-quan-nho { width: 100%; height: 95px; border-radius: 10px; border: 2px solid #95d5b2; margin-bottom: 6px; }
+  .bang-so-lieu { background: #fff; border-radius: 14px; padding: 10px 12px; margin: 12px 0;
+                  border: 3px solid #95d5b2; font-size: 13px; color: #264653; }
+  .bang-so-lieu .dong { display: flex; justify-content: space-between; padding: 4px 0;
+                        border-bottom: 1px solid #f0ece0; }
+  .bang-so-lieu .dong:last-child { border-bottom: none; }
+  .nhan-xet-box { background: #d8f3dc; border-radius: 14px; padding: 12px 14px; font-size: 13px;
+                  color: #2d6a4f; line-height: 1.5; margin-bottom: 14px; }
+  .diem-thuong-box { background: #fff3ea; border: 3px dashed #f4a261; border-radius: 14px;
+                      padding: 12px 14px; font-size: 13px; color: #bb5b1f; line-height: 1.6;
+                      margin-bottom: 14px; text-align: center; }
+  .diem-thuong-box .diem-lon { font-size: 20px; font-weight: bold; }
+
+  .xephang-dong { margin-bottom: 12px; }
+  .xephang-nhan { display: flex; justify-content: space-between; font-size: 13px;
+                   color: #264653; margin-bottom: 3px; }
+  .xephang-nhan b { color: #2d6a4f; }
+  .xephang-thanh-nen { background: #e9e4d3; border-radius: 8px; height: 18px; overflow: hidden; }
+  .xephang-thanh { height: 100%; background: linear-gradient(90deg, #a97c50, #52b788); border-radius: 8px; }
+  .xephang-dong.can-nhat .xephang-nhan b { color: #bb5b1f; }
+  .xephang-dong.can-nhat .xephang-thanh-nen { border: 2px solid #f4a261; }
+
+  textarea { font-family: inherit; font-size: 14px; width: 100%; min-height: 90px;
+             border-radius: 14px; border: 2px solid #95d5b2; padding: 10px; background: #fff;
+             resize: vertical; margin-bottom: 10px; }
+  .goc-xanh-goi-y { background: #fff; border-radius: 14px; padding: 10px 14px; margin-bottom: 8px;
+                    font-size: 13px; color: #264653; border: 2px solid #b7e4c7; }
+  .da-luu { font-size: 12px; color: #52796f; text-align: center; min-height: 16px; }
+
+  .eic-khung { background: #fff; border: 3px solid #95d5b2; border-radius: 16px;
+               padding: 10px; margin-bottom: 12px; text-align: center; }
+  .eic-khung img { width: 100%; max-width: 300px; height: 150px; object-fit: cover;
+                    border-radius: 12px; display: block; margin: 0 auto 6px; background: #dfeee5; }
+  .eic-khung .eic-loi { font-size: 12px; color: #8a9a94; padding: 24px 6px; line-height: 1.5; }
+  .eic-khung .eic-nhan { font-size: 11px; color: #52796f; line-height: 1.4; }
+
+  .doanhinh-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .doanhinh-o { border-radius: 16px; overflow: hidden; border: 3px solid rgba(0,0,0,0.06);
+                background: #fff; cursor: pointer; position: relative; }
+  .doanhinh-o img { width: 100%; height: 100px; object-fit: cover; display: block; background: #dfeee5; }
+  .doanhinh-o .nhan-abcd { position: absolute; top: 6px; left: 6px; width: 22px; height: 22px;
+                            border-radius: 50%; background: #2d6a4f; color: #fff; font-size: 12px;
+                            font-weight: bold; display: flex; align-items: center; justify-content: center; }
+  .doanhinh-o .ten-hien { display: none; font-size: 11px; font-weight: bold; color: #264653;
+                           text-align: center; padding: 4px 2px; background: #fff; line-height: 1.3; }
+  .doanhinh-o.hien-ten .ten-hien { display: block; }
+  .doanhinh-o.dung { border-color: #52b788; box-shadow: 0 0 0 3px #52b78855; }
+  .doanhinh-o.sai { border-color: #e76f51; opacity: 0.75; }
+</style>
+
+<div class="phone">
+
+  <!-- MÀN 1: Chào mừng -->
+  <div id="man-chao" class="screen active">
+    <button class="home-btn" id="nut-doi-ngonngu" onclick="doiNgonNgu()" style="width:auto;padding:0 10px;">🇻🇳 VI</button>
+    <div class="diem-hien-thi diem-goc">🏆 0 sao</div>
+    <div class="mascot">🌱</div>
+    <div class="app-name">Green Corner</div>
+    <div class="tagline" data-i18n="chao_tagline">Từ một góc xanh nhỏ,<br>khám phá màu xanh của cả Trái Đất</div>
+    <div class="story-box" data-i18n="chao_story">
+      Green Corner bắt đầu từ một góc xanh nhỏ trong trường mình. Rồi mình tự hỏi:
+      "Trái Đất nhìn từ không gian xanh như thế nào?" NASA giúp mình trả lời câu hỏi đó
+      bằng dữ liệu quan sát thật từ vệ tinh.
+    </div>
+    <button class="btn-primary" data-i18n="chao_nut_batdau" onclick="hienManHinh('man-map')">🌍 Bắt đầu khám phá</button>
+    <button class="btn-secondary" data-i18n="chao_nut_tuantra" onclick="hienManHinh('man-tuantra-quocgia')">🚨 Đội Tuần Tra Xanh</button>
+    <button class="btn-secondary" data-i18n="chao_nut_huongdan" onclick="hienManHinh('man-huongdan')">❓ Hướng dẫn chơi</button>
+  </div>
+
+  <!-- MÀN: Hướng dẫn chơi -->
+  <div id="man-huongdan" class="screen">
+    <button class="home-btn" onclick="hienManHinh('man-chao')">🏠</button>
+    <h2 class="title" data-i18n="huongdan_tieude">❓ Hướng dẫn chơi</h2>
+    <div class="hochoi-card">
+      <h4 data-i18n="huongdan_1_tieude">1. 🌍 Khám phá</h4>
+      <span data-i18n="huongdan_1_noidung">Chọn 1 nơi trên Trái Đất (thành phố, rừng, sa mạc...) mà em muốn tìm hiểu.</span>
+    </div>
+    <div class="hochoi-card">
+      <h4 data-i18n="huongdan_2_tieude">2. 🎧 Lắng nghe</h4>
+      <span data-i18n="huongdan_2_noidung">Nghe âm thanh NASA "kể" về mức phủ xanh, nhiệt độ và lượng mưa ở đó -- nhưng CHƯA nhìn thấy số liệu.</span>
+    </div>
+    <div class="hochoi-card">
+      <h4 data-i18n="huongdan_3_tieude">3. 📚 Học Hỏi (không bắt buộc)</h4>
+      <span data-i18n="huongdan_3_noidung">Xem tổng hợp kiến thức và số liệu NASA về nơi đó nếu em muốn tìm hiểu thêm.</span>
+    </div>
+    <div class="hochoi-card">
+      <h4 data-i18n="huongdan_4_tieude">4. 🎨 Vẽ tranh dự đoán</h4>
+      <span data-i18n="huongdan_4_noidung">Dựa vào âm thanh đã nghe, bấm chọn mức phủ xanh, nhiệt độ, lượng mưa mà em NGHĨ là đúng. Cảnh vẽ sẽ hiện ra theo lựa chọn của em.</span>
+    </div>
+    <div class="hochoi-card">
+      <h4 data-i18n="huongdan_5_tieude">5. 🛰️ Xem NASA thấy gì</h4>
+      <span data-i18n="huongdan_5_noidung">So sánh dự đoán của em với số liệu NASA thật. Đoán đúng mức nào được +1⭐ cho mức đó, tối đa 3⭐ mỗi lượt chơi.</span>
+    </div>
+    <div class="hochoi-card">
+      <h4 data-i18n="huongdan_6_tieude">6. 🌱 Green Corner của em</h4>
+      <span data-i18n="huongdan_6_noidung">Quay về với hành động nhỏ ở nơi mình sống: trồng và chăm sóc một góc xanh thật.</span>
+    </div>
+    <div class="hochoi-card">
+      <h4 data-i18n="huongdan_tuantra_tieude">🚨 Đội Tuần Tra Xanh (chế độ chơi thêm)</h4>
+      <span data-i18n="huongdan_tuantra_noidung">Chọn 1 quốc gia, rồi bấm LẦN LƯỢT các điểm ứng viên để xếp hạng, từ nơi em nghĩ ÍT CÂY XANH NHẤT đến NHIỀU CÂY XANH NHẤT. Đoán đúng nơi ít xanh nhất được +2⭐, đoán đúng nơi xanh nhất được +1⭐ (tối đa 3⭐/lượt).</span>
+    </div>
+    <button class="btn-primary" data-i18n="huongdan_nut_batdau" onclick="hienManHinh('man-chao')">Đã hiểu, bắt đầu chơi!</button>
+  </div>
+
+  <!-- MÀN 2: Chọn khu vực trên "bản đồ" -->
+  <div id="man-map" class="screen">
+    <button class="home-btn" onclick="hienManHinh('man-chao')">🏠</button>
+    <div class="diem-hien-thi">🏆 0 sao</div>
+    <h2 class="title" data-i18n="map_tieude" style="margin-top: 34px;">🌍 Khám phá</h2>
+    <p class="hint" data-i18n="map_goiy">Chọn một điểm trên Trái Đất mà em muốn nghe và xem dữ liệu NASA</p>
+    <div class="grid" id="danh-sach-khu-vuc"></div>
+  </div>
+
+  <!-- MÀN 3: Đang tải dữ liệu NASA -->
+  <div id="man-tai" class="screen">
+    <div class="loading-box">
+      <div class="emoji">🛰️</div>
+      <p id="trang-thai-tai" data-i18n="tai_dangtai">Đang hỏi vệ tinh NASA...</p>
+    </div>
+  </div>
+
+  <!-- MÀN 4: Lắng nghe -->
+  <div id="man-nghe" class="screen">
+    <button class="home-btn" onclick="hienManHinh('man-map')">🏠</button>
+    <div class="khuvuc-header">
+      <div class="emoji" id="nghe-emoji">🌍</div>
+      <div class="ten" id="nghe-ten">—</div>
+    </div>
+    <p class="hint" data-i18n="nghe_goiy">NASA đang quan sát nơi này từ không gian. Em hãy bấm nghe thử xem nó "nghe" như thế nào nhé!</p>
+
+    <div class="eic-khung" id="eic-khung-nghe">
+      <img id="eic-anh-nghe" alt="" style="display:none;">
+      <div class="eic-loi" id="eic-trangthai-nghe" data-i18n="eic_dangtai">🛰️ Đang tải khung hình từ Earth Information Center...</div>
+      <div class="eic-nhan" id="eic-nhan-nghe" style="display:none;">
+        <span data-i18n="eic_nhan">🛰️ Ảnh MODIS thật từ NASA, cùng ngày với dữ liệu bên dưới</span>
+        <span id="eic-ngay-nghe"></span>
+      </div>
+    </div>
+
+    <div class="am-thanh-row">
+      <div class="hang-tren">
+        <span class="nhan" data-i18n="nghe_phuxanh">🌿 Phủ xanh</span>
+        <button class="btn-secondary" data-i18n="nghe_nut_nghe" style="margin:0" onclick="xuLyNghe('phuxanh')">🎧 Nghe</button>
+      </div>
+      <div class="trang-thai" id="trang-thai-phuxanh"></div>
+    </div>
+    <div class="am-thanh-row">
+      <div class="hang-tren">
+        <span class="nhan" data-i18n="nghe_nhietdo">🌡️ Nhiệt độ</span>
+        <button class="btn-secondary" data-i18n="nghe_nut_nghe" style="margin:0" onclick="xuLyNghe('nhietdo')">🎧 Nghe</button>
+      </div>
+      <div class="trang-thai" id="trang-thai-nhietdo"></div>
+    </div>
+    <div class="am-thanh-row">
+      <div class="hang-tren">
+        <span class="nhan" data-i18n="nghe_mua">🌧️ Lượng mưa</span>
+        <button class="btn-secondary" data-i18n="nghe_nut_nghe" style="margin:0" onclick="xuLyNghe('mua')">🎧 Nghe</button>
+      </div>
+      <div class="trang-thai" id="trang-thai-mua"></div>
+    </div>
+
+    <button class="muc-luc-btn" data-i18n="nghe_nut_mucluc" onclick="moMucLuc()">📖 Mục lục: âm thanh này nghĩa là gì?</button>
+    <button class="btn-secondary" data-i18n="nghe_nut_doanhinh" onclick="moManDoanHinh()">🖼️ Đố vui: Nghe âm đoán hình</button>
+    <button class="btn-secondary" data-i18n="nghe_nut_hochoi" onclick="moManHocHoi()">📚 Học Hỏi về nơi này</button>
+    <button class="btn-primary" data-i18n="nghe_nut_tiep" id="nut-toi-ve" disabled onclick="moManVe()">🎨 Tiếp theo: Vẽ tranh dự đoán</button>
+  </div>
+
+  <!-- MÀN: Đố vui Nghe âm đoán hình (pair sonification thật với 1 khung hình vệ tinh thật) -->
+  <div id="man-doanhinh" class="screen">
+    <button class="home-btn" onclick="hienManHinh('man-nghe')">🏠</button>
+    <h2 class="title" data-i18n="doanhinh_tieude">🖼️ Nghe âm, đoán hình!</h2>
+    <p class="hint" data-i18n="doanhinh_goiy">Bấm nghe lại âm thanh, rồi đoán xem ảnh vệ tinh NÀO đúng là của nơi này.</p>
+    <button class="btn-secondary" data-i18n="doanhinh_nut_nghe" onclick="ngheLaiTatCa()">🎧 Nghe lại âm thanh</button>
+    <div class="doanhinh-grid" id="doanhinh-luachon"></div>
+    <div class="nhan-xet-box" id="doanhinh-ketqua" style="display:none;"></div>
+    <button class="btn-primary" data-i18n="doanhinh_nut_khac" onclick="moManDoanHinh()">🔄 Đố vòng khác</button>
+    <button class="btn-secondary" data-i18n="hochoi_nut_quaylai" onclick="hienManHinh('man-nghe')">⬅ Quay lại Lắng nghe</button>
+  </div>
+
+  <!-- MÀN: Học Hỏi -->
+  <div id="man-hochoi" class="screen">
+    <button class="home-btn" onclick="hienManHinh('man-map')">🏠</button>
+    <h2 class="title" data-i18n="hochoi_tieude">📚 Học Hỏi</h2>
+    <div id="noi-dung-hochoi"></div>
+    <button class="btn-primary" data-i18n="hochoi_nut_quaylai" onclick="hienManHinh('man-nghe')">⬅ Quay lại Lắng nghe</button>
+  </div>
+
+  <!-- MÀN 5: Vẽ tranh dự đoán -->
+  <div id="man-ve" class="screen">
+    <button class="home-btn" onclick="hienManHinh('man-map')">🏠</button>
+    <h2 class="title" data-i18n="ve_tieude">🎨 Em tưởng tượng nơi này thế nào?</h2>
+    <p class="hint" data-i18n="ve_goiy">Dựa vào âm thanh vừa nghe, bấm chọn mức em nghĩ là đúng</p>
+
+    <canvas id="canvas-ve" class="canh-quan" width="340" height="170"></canvas>
+
+    <div class="chon-nhom-tieude" data-i18n="ve_hoi_phuxanh">🌿 Theo bạn, nơi này có bao nhiêu cây xanh?</div>
+    <div class="chon-hang" id="chon-phuxanh"></div>
+
+    <div class="chon-nhom-tieude" data-i18n="ve_hoi_nhietdo">🌡️ Theo bạn đoán, nhiệt độ trung bình ở đây khoảng bao nhiêu?</div>
+    <div class="chon-hang" id="chon-nhietdo"></div>
+
+    <div class="chon-nhom-tieude" data-i18n="ve_hoi_mua">🌧️ Theo bạn, ở đây mưa có nhiều không?</div>
+    <div class="chon-hang" id="chon-mua"></div>
+
+    <button class="btn-secondary" data-i18n="ve_nut_nghelai" onclick="ngheLaiTatCa()">🎧 Nghe lại</button>
+    <button class="btn-primary" data-i18n="ve_nut_chot" onclick="xuLyChotDuDoan()">🔒 Chốt dự đoán &amp; xem NASA</button>
+  </div>
+
+  <!-- MÀN 6: So sánh với NASA -->
+  <div id="man-sosanh" class="screen">
+    <button class="home-btn" onclick="hienManHinh('man-map')">🏠</button>
+    <h2 class="title" data-i18n="sosanh_tieude">🛰️ NASA thấy gì?</h2>
+
+    <div class="so-sanh-row">
+      <div class="so-sanh-cot">
+        <h4 data-i18n="sosanh_cot_em">🎨 Em dự đoán</h4>
+        <canvas id="canvas-dudoan" class="canh-quan-nho" width="150" height="95"></canvas>
+      </div>
+      <div class="so-sanh-cot">
+        <h4 data-i18n="sosanh_cot_nasa">🛰️ NASA quan sát</h4>
+        <canvas id="canvas-thuc-te" class="canh-quan-nho" width="150" height="95"></canvas>
+      </div>
+    </div>
+
+    <div class="bang-so-lieu" id="bang-so-sanh"></div>
+    <div class="hochoi-card" id="thoitiet-gannhat" style="display:none;"></div>
+    <div class="nhan-xet-box" id="nhan-xet"></div>
+    <div class="diem-thuong-box" id="diem-thuong"></div>
+
+    <button class="btn-primary" data-i18n="sosanh_nut_tiep" onclick="hienManHinh('man-gocxanh')">🌱 Tiếp theo: Green Corner của em</button>
+    <button class="btn-secondary" data-i18n="sosanh_nut_khac" onclick="hienManHinh('man-map')">⬅ Khám phá nơi khác</button>
+  </div>
+
+  <!-- MÀN 7: Green Corner của em -->
+  <div id="man-gocxanh" class="screen">
+    <button class="home-btn" onclick="hienManHinh('man-chao')">🏠</button>
+    <h2 class="title" data-i18n="gocxanh_tieude">🌱 Green Corner của em</h2>
+    <p class="hint" data-i18n="gocxanh_goiy">NASA quan sát Trái Đất từ không gian. Còn em, hãy quan sát và chăm sóc màu xanh ở nơi mình sống nhé!</p>
+
+    <div class="goc-xanh-goi-y" data-i18n="gocxanh_goiy1">🪴 Tìm một góc nhỏ quanh nhà hoặc trường để trồng hoặc chăm một cái cây.</div>
+    <div class="goc-xanh-goi-y" data-i18n="gocxanh_goiy2">👀 Mỗi tuần, quan sát xem cây thay đổi thế nào (lá, chiều cao, màu sắc).</div>
+    <div class="goc-xanh-goi-y" data-i18n="gocxanh_goiy3">📸 Chụp ảnh hoặc vẽ lại góc xanh của em theo thời gian.</div>
+
+    <textarea id="ghi-chu-goc-xanh" data-i18n-placeholder="gocxanh_placeholder" placeholder="Góc xanh của em ở đâu? Em sẽ trồng hoặc chăm sóc cây gì?"></textarea>
+    <button class="btn-primary" data-i18n="gocxanh_nut_luu" onclick="luuGocXanh()">💾 Lưu lại</button>
+    <div class="da-luu" id="da-luu-thongbao"></div>
+
+    <button class="btn-secondary" data-i18n="gocxanh_nut_khac" onclick="hienManHinh('man-map')">🌍 Khám phá thêm nơi khác</button>
+  </div>
+
+  <!-- MÀN: Đội Tuần Tra Xanh -- chọn quốc gia -->
+  <div id="man-tuantra-quocgia" class="screen">
+    <button class="home-btn" onclick="hienManHinh('man-chao')">🏠</button>
+    <h2 class="title" data-i18n="tuantra_tieude" style="margin-top: 8px;">🚨 Đội Tuần Tra Xanh</h2>
+    <p class="hint" data-i18n="tuantra_goiy">Chọn 1 quốc gia. Đâu là nơi CẦN TRỒNG CÂY NHẤT theo dữ liệu NASA?</p>
+    <div class="grid" id="danh-sach-quocgia"></div>
+  </div>
+
+  <!-- MÀN: Đội Tuần Tra Xanh -- đoán trước khi xem dữ liệu -->
+  <div id="man-tuantra-doan" class="screen">
+    <button class="home-btn" onclick="hienManHinh('man-tuantra-quocgia')">🏠</button>
+    <h2 class="title" id="tuantra-doan-tieude" style="margin-top: 8px;">—</h2>
+    <p class="hint" data-i18n="tuantra_doan_goiy">Bấm LẦN LƯỢT các ô, từ nơi em nghĩ ÍT CÂY XANH NHẤT đến NHIỀU CÂY XANH NHẤT. Chưa xem số liệu nhé!</p>
+    <div class="grid" id="danh-sach-tuantra-doan"></div>
+    <p class="hint" id="tuantra-tien-do" style="margin-top:4px;"></p>
+    <button class="btn-secondary" data-i18n="tuantra_nut_chonlai" onclick="lamLaiThuTuTuanTra()">🔄 Chọn lại thứ tự</button>
+    <button class="btn-primary" data-i18n="tuantra_nut_xemketqua" id="nut-xem-ketqua-tuantra" disabled onclick="xuLyXemKetQuaTuanTra()">🛰️ Xem NASA xếp hạng thế nào</button>
+  </div>
+
+  <!-- MÀN: Đội Tuần Tra Xanh -- kết quả xếp hạng -->
+  <div id="man-tuantra-ketqua" class="screen">
+    <button class="home-btn" onclick="hienManHinh('man-tuantra-quocgia')">🏠</button>
+    <h2 class="title" data-i18n="tuantra_ketqua_tieude" style="margin-top: 8px;">🛰️ NASA xếp hạng</h2>
+    <div class="nhan-xet-box" id="tuantra-nhanxet"></div>
+    <div id="tuantra-bang-xephang"></div>
+    <div class="diem-thuong-box" id="tuantra-diem"></div>
+    <button class="btn-primary" data-i18n="tuantra_nut_khac" onclick="hienManHinh('man-tuantra-quocgia')">🚨 Tuần tra quốc gia khác</button>
+    <button class="btn-secondary" data-i18n="tuantra_nut_trangchu" onclick="hienManHinh('man-chao')">🏠 Về trang chủ</button>
+  </div>
+
+  <!-- Lớp phủ: Mục lục âm thanh -->
+  <div id="lop-phu-mucluc" class="overlay">
+    <div class="overlay-card">
+      <h3>📖 Mục lục âm thanh</h3>
+      <div class="muc-luc-loai">
+        <b>🎵 Quy tắc chung cho cả 3 loại</b> (dùng thang Đô-Rê-Mi-Fa-Sol-La-Si-Đô,
+        trải rộng hơn 2 quãng 8 để dễ phân biệt)<br>
+        Mức <b>Cao</b> = quãng CAO (Đô5-Rê5-Mi5-Sol5), <b>vui nhộn</b>, đi lên, nhanh<br>
+        Mức <b>Trung bình</b> = quãng GIỮA (Đô4-Rê4-Mi4-Fa4), vừa phải<br>
+        Mức <b>Thấp</b> = quãng TRẦM (La3-Sol3-Fa3), <b>buồn nhẹ</b>, đi xuống, chậm
+      </div>
+      <div class="muc-luc-loai">
+        <b>🌿 Phủ xanh</b> — âm tam giác, trong trẻo như lá cây.
+        Rậm rạp nghe vui tươi, đất trống nghe buồn hơn.
+      </div>
+      <div class="muc-luc-loai">
+        <b>🌡️ Nhiệt độ</b> (dưới 15°C = Thấp, 15–25°C = Trung bình, trên 25°C = Cao) —
+        âm tròn ấm áp.
+      </div>
+      <div class="muc-luc-loai">
+        <b>🌧️ Lượng mưa</b> (dưới 1mm/ngày = Thấp, 1–4mm/ngày = Trung bình, trên 4mm/ngày = Cao) —
+        âm trầm hơn, nghe ẩm ướt như mưa. Mưa càng nhiều, càng nhiều tiếng "tí tách" phía sau.
+      </div>
+      <div class="muc-luc-loai">
+        <b>🔬 Tinh chỉnh theo số liệu thật</b> — trong CÙNG 1 mức, cao độ vẫn hơi
+        khác nhau tuỳ giá trị NASA chính xác (không phải mọi nơi "mức Cao" nghe y hệt
+        nhau), và âm sắc nhiệt độ chuyển dần liên tục theo °C thật.
+      </div>
+      <div class="muc-luc-loai">
+        <b>📈 Nốt bè xu hướng</b> — nếu nghe thêm 1 nốt bè nhẹ ngay sau giai điệu
+        chính: bè CAO hơn nghĩa là số liệu này đang TĂNG so với lần đo/năm trước,
+        bè THẤP hơn nghĩa là đang GIẢM. Không có nốt bè = gần như không đổi.
+      </div>
+      <button class="btn-primary" onclick="dongMucLuc()">Đã hiểu, đóng lại</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================
+   GREEN CORNER — phiên bản đơn giản, 1 file, tiếng Việt
+   NASA DATA -> PHÂN LOẠI (thấp/vừa/cao) -> ÂM THANH + HÌNH VẼ
+   ========================================================= */
+
+// ---------- Ngôn ngữ (BƯỚC 1: mới áp dụng cho 5 màn chính) ----------
+// Nguyên tắc an toàn: KHÔNG sửa các biến/hàm mà những màn CHƯA hỗ trợ
+// tiếng Anh (Học Hỏi, Đội Tuần Tra Xanh, Hướng dẫn chơi, Green Corner của
+// em) đang dùng -- những màn đó vẫn hiển thị tiếng Việt như cũ, không bị
+// ảnh hưởng. Chỉ 5 màn: Chào, Khám phá, Đang tải, Lắng nghe, Vẽ tranh,
+// So sánh được dịch đầy đủ ở bước này.
+let ngonNguHienTai = "vi";
+try { ngonNguHienTai = localStorage.getItem("greenCorner_ngonNgu") || "vi"; } catch (e) { /* bỏ qua */ }
+
+const TU_DIEN = {
+  vi: {
+    chao_tagline: "Từ một góc xanh nhỏ,<br>khám phá màu xanh của cả Trái Đất",
+    chao_story: "Green Corner bắt đầu từ một góc xanh nhỏ trong trường mình. Rồi mình tự hỏi: \"Trái Đất nhìn từ không gian xanh như thế nào?\" NASA giúp mình trả lời câu hỏi đó bằng dữ liệu quan sát thật từ vệ tinh.",
+    chao_nut_batdau: "🌍 Bắt đầu khám phá",
+    chao_nut_tuantra: "🚨 Đội Tuần Tra Xanh",
+    chao_nut_huongdan: "❓ Hướng dẫn chơi",
+
+    map_tieude: "🌍 Khám phá",
+    map_goiy: "Chọn một điểm trên Trái Đất mà em muốn nghe và xem dữ liệu NASA",
+
+    tai_dangtai: "Đang hỏi vệ tinh NASA...",
+    tai_dangtai_ten: "🛰️ Đang hỏi vệ tinh NASA về ",
+    tai_loi: "😅 Chưa lấy được dữ liệu NASA, em thử lại nhé!",
+
+    nghe_goiy: "NASA đang quan sát nơi này từ không gian. Em hãy bấm nghe thử xem nó \"nghe\" như thế nào nhé!",
+    nghe_phuxanh: "🌿 Phủ xanh",
+    nghe_nhietdo: "🌡️ Nhiệt độ",
+    nghe_mua: "🌧️ Lượng mưa",
+    nghe_nut_nghe: "🎧 Nghe",
+    nghe_muc: "🔊 Mức ",
+    nghe_xuhuong_tang: " · 📈 tăng so với lần đo trước",
+    nghe_xuhuong_giam: " · 📉 giảm so với lần đo trước",
+    nghe_nut_mucluc: "📖 Mục lục: âm thanh này nghĩa là gì?",
+    nghe_nut_hochoi: "📚 Học Hỏi về nơi này",
+    nghe_nut_tiep: "🎨 Tiếp theo: Vẽ tranh dự đoán",
+    nghe_nut_doanhinh: "🖼️ Đố vui: Nghe âm đoán hình",
+
+    eic_dangtai: "🛰️ Đang tải khung hình từ Earth Information Center...",
+    eic_nhan: "🛰️ Ảnh MODIS thật từ NASA, cùng ngày với dữ liệu bên dưới",
+    eic_loi: "😅 Ảnh vệ tinh hôm nay chưa tải được (có thể do mây hoặc mạng) -- không sao, âm thanh vẫn đúng dữ liệu NASA!",
+
+    doanhinh_tieude: "🖼️ Nghe âm, đoán hình!",
+    doanhinh_goiy: "Bấm nghe lại âm thanh, rồi đoán xem ảnh vệ tinh NÀO đúng là của nơi này.",
+    doanhinh_nut_nghe: "🎧 Nghe lại âm thanh",
+    doanhinh_nut_khac: "🔄 Đố vòng khác",
+    doanhinh_dung: "🎯 Chính xác! Tai của em rất thính đó!",
+    doanhinh_sai: "😅 Chưa đúng rồi, ảnh có viền xanh mới là ảnh thật của {ten}. Thử vòng khác nhé!",
+
+    ve_tieude: "🎨 Em tưởng tượng nơi này thế nào?",
+    ve_goiy: "Dựa vào âm thanh vừa nghe, bấm chọn mức em nghĩ là đúng",
+    ve_hoi_phuxanh: "🌿 Theo bạn, nơi này có bao nhiêu cây xanh?",
+    ve_hoi_nhietdo: "🌡️ Theo bạn đoán, nhiệt độ trung bình ở đây khoảng bao nhiêu?",
+    ve_hoi_mua: "🌧️ Theo bạn, ở đây mưa có nhiều không?",
+    ve_nut_nghelai: "🎧 Nghe lại",
+    ve_nut_chot: "🔒 Chốt dự đoán & xem NASA",
+
+    sosanh_tieude: "🛰️ NASA thấy gì?",
+    sosanh_cot_em: "🎨 Em dự đoán",
+    sosanh_cot_nasa: "🛰️ NASA quan sát",
+    sosanh_nhan_phuxanh: "🌿 Phủ xanh (NDVI)",
+    sosanh_nhan_nhietdo: "🌡️ Nhiệt độ",
+    sosanh_nhan_mua: "🌧️ Mưa (mm/ngày)",
+    sosanh_em_nasa: "Em: {a} ({amuc}) · NASA: {b} ({bmuc})",
+    sosanh_ngaydo: "📅 Ngày đo phủ xanh",
+    sosanh_chatluong: "📡 Chất lượng ảnh",
+    sosanh_troiquang: "Trời quang",
+    sosanh_mayche: "Có mây che",
+    sosanh_nx_gan: "🎯 Tai của em thính thật đấy! Dự đoán phủ xanh gần sát với NASA luôn.",
+    sosanh_nx_kha: "👂 Khá gần rồi đó! Âm thanh cho mình manh mối tốt, nhưng dữ liệu NASA vẫn chính xác nhất.",
+    sosanh_nx_xa: "🔍 Thú vị ghê, dự đoán của em khác khá nhiều so với NASA. Đó là lý do vì sao nhà khoa học luôn cần kiểm chứng bằng dữ liệu thật!",
+    sosanh_diem_chua: "Chưa được sao nào",
+    sosanh_diem_luot: "Lượt này em đoán đúng mức {n}/3 chỉ số",
+    sosanh_diem_tong: "🏆 Tổng điểm tích lũy: {n} sao",
+    thoitiet_tieude: "📅 Thời tiết gần đây nhất NASA có",
+    thoitiet_ngay: "Ngày {ngay}: <b>{temp}°C</b>, mưa <b>{mua} mm/ngày</b>.",
+    thoitiet_ghichu: "Lưu ý: NASA cần vài ngày để xử lý dữ liệu, nên đây là số liệu MỚI NHẤT hiện có, không phải đúng thời điểm này.",
+    sosanh_nut_tiep: "🌱 Tiếp theo: Green Corner của em",
+    sosanh_nut_khac: "⬅ Khám phá nơi khác",
+
+    hochoi_tieude: "📚 Học Hỏi",
+    hochoi_nut_quaylai: "⬅ Quay lại Lắng nghe",
+    hochoi_ndvi_tieude: "🌿 NDVI là gì?",
+    hochoi_ndvi_giaithich: "NDVI là chỉ số NASA dùng để đo mức độ xanh tốt của cây cối nhìn từ vệ tinh, tính theo thang 0 (đất trống) đến 1 (cây cối rất rậm rạp). NDVI không đếm số cây, mà cho biết bề mặt đất ở đó xanh tươi đến mức nào.",
+    hochoi_dulieu_tieude: "📊 Dữ liệu NASA tại {ten}",
+    hochoi_dong_phuxanh: "🌿 Phủ xanh (NDVI): <b>{gt}</b> — Mức {muc}. Nơi này {giaithich}",
+    hochoi_dong_nhietdo: "🌡️ Nhiệt độ trung bình năm: <b>{gt}°C</b> — Mức {muc}. Nơi này có {giaithich}",
+    hochoi_dong_mua: "🌧️ Lượng mưa trung bình: <b>{gt} mm/ngày</b> — Mức {muc}. Nơi này {giaithich}",
+    hochoi_nguon_tieude: "🛰️ Nguồn dữ liệu",
+    hochoi_nguon_phuxanh: "Phủ xanh: NASA MODIS/Terra Vegetation Indices (qua NASA ORNL DAAC), ảnh gần nhất trời quang, ngày {ngay}.",
+    hochoi_nguon_thoitiet: "Nhiệt độ & lượng mưa: NASA POWER, trung bình năm {nam}.",
+
+    tuantra_tieude: "🚨 Đội Tuần Tra Xanh",
+    tuantra_goiy: "Chọn 1 quốc gia. Đâu là nơi CẦN TRỒNG CÂY NHẤT theo dữ liệu NASA?",
+    tuantra_diem_ungvien: "{n} điểm ứng viên",
+    tuantra_dangtai: "🛰️ Đang thu thập dữ liệu phủ xanh {ten} ...",
+    tuantra_doan_goiy: "Bấm LẦN LƯỢT các ô, từ nơi em nghĩ ÍT CÂY XANH NHẤT đến NHIỀU CÂY XANH NHẤT. Chưa xem số liệu nhé!",
+    tuantra_tiendo: "✅ Đã chọn {da}/{tong} — bấm nốt các ô còn lại để mở nút bên dưới!",
+    tuantra_tiendo_xong: "✅ Đã chọn đủ {tong}/{tong}! Bấm nút bên dưới để xem kết quả.",
+    tuantra_nut_chonlai: "🔄 Chọn lại thứ tự",
+    tuantra_nut_xemketqua: "🛰️ Xem NASA xếp hạng thế nào",
+    tuantra_ketqua_tieude: "🛰️ NASA xếp hạng",
+    tuantra_xephang_that: "🛰️ Xếp hạng thật của NASA (từ ít xanh nhất)",
+    tuantra_xephang_em: "🎨 Thứ tự em đã đoán",
+    tuantra_nx_ca2: "🎯 Xuất sắc! Em xác định đúng cả nơi CẦN TRỒNG CÂY NHẤT và nơi XANH NHẤT!",
+    tuantra_nx_dau: "👍 Em đoán đúng nơi cần trồng cây nhất ({dau})! Còn nơi xanh nhất thật ra là {cuoi}.",
+    tuantra_nx_cuoi: "👍 Em đoán đúng nơi xanh nhất ({cuoi})! Còn nơi CẦN TRỒNG CÂY NHẤT thật ra là {dau}.",
+    tuantra_nx_khong: "🔍 Thú vị đó! Nơi thật sự cần trồng cây nhất là {dau} (NDVI {ndvi}), còn xanh nhất là {cuoi}.",
+    tuantra_diem_hoi: "🌱 Nếu là em, em nghĩ vì sao {ten} lại ít cây xanh hơn những nơi khác?",
+    tuantra_nut_khac: "🚨 Tuần tra quốc gia khác",
+    tuantra_nut_trangchu: "🏠 Về trang chủ",
+
+    huongdan_tieude: "❓ Hướng dẫn chơi",
+    huongdan_1_tieude: "1. 🌍 Khám phá",
+    huongdan_1_noidung: "Chọn 1 nơi trên Trái Đất (thành phố, rừng, sa mạc...) mà em muốn tìm hiểu.",
+    huongdan_2_tieude: "2. 🎧 Lắng nghe",
+    huongdan_2_noidung: "Nghe âm thanh NASA \"kể\" về mức phủ xanh, nhiệt độ và lượng mưa ở đó -- nhưng CHƯA nhìn thấy số liệu.",
+    huongdan_3_tieude: "3. 📚 Học Hỏi (không bắt buộc)",
+    huongdan_3_noidung: "Xem tổng hợp kiến thức và số liệu NASA về nơi đó nếu em muốn tìm hiểu thêm.",
+    huongdan_4_tieude: "4. 🎨 Vẽ tranh dự đoán",
+    huongdan_4_noidung: "Dựa vào âm thanh đã nghe, bấm chọn mức phủ xanh, nhiệt độ, lượng mưa mà em NGHĨ là đúng. Cảnh vẽ sẽ hiện ra theo lựa chọn của em.",
+    huongdan_5_tieude: "5. 🛰️ Xem NASA thấy gì",
+    huongdan_5_noidung: "So sánh dự đoán của em với số liệu NASA thật. Đoán đúng mức nào được +1⭐ cho mức đó, tối đa 3⭐ mỗi lượt chơi.",
+    huongdan_6_tieude: "6. 🌱 Green Corner của em",
+    huongdan_6_noidung: "Quay về với hành động nhỏ ở nơi mình sống: trồng và chăm sóc một góc xanh thật.",
+    huongdan_tuantra_tieude: "🚨 Đội Tuần Tra Xanh (chế độ chơi thêm)",
+    huongdan_tuantra_noidung: "Chọn 1 quốc gia, rồi bấm LẦN LƯỢT các điểm ứng viên để xếp hạng, từ nơi em nghĩ ÍT CÂY XANH NHẤT đến NHIỀU CÂY XANH NHẤT. Đoán đúng nơi ít xanh nhất được +2⭐, đoán đúng nơi xanh nhất được +1⭐ (tối đa 3⭐/lượt).",
+    huongdan_nut_batdau: "Đã hiểu, bắt đầu chơi!",
+
+    gocxanh_tieude: "🌱 Green Corner của em",
+    gocxanh_goiy: "NASA quan sát Trái Đất từ không gian. Còn em, hãy quan sát và chăm sóc màu xanh ở nơi mình sống nhé!",
+    gocxanh_goiy1: "🪴 Tìm một góc nhỏ quanh nhà hoặc trường để trồng hoặc chăm một cái cây.",
+    gocxanh_goiy2: "👀 Mỗi tuần, quan sát xem cây thay đổi thế nào (lá, chiều cao, màu sắc).",
+    gocxanh_goiy3: "📸 Chụp ảnh hoặc vẽ lại góc xanh của em theo thời gian.",
+    gocxanh_placeholder: "Góc xanh của em ở đâu? Em sẽ trồng hoặc chăm sóc cây gì?",
+    gocxanh_nut_luu: "💾 Lưu lại",
+    gocxanh_daluu: "✅ Đã lưu vào máy của em!",
+    gocxanh_nut_khac: "🌍 Khám phá thêm nơi khác"
+  },
+  en: {
+    chao_tagline: "From one small green corner,<br>discover the green of the whole Earth",
+    chao_story: "Green Corner started as one small green corner of our school. Then we wondered: \"What does the whole Earth look like from space?\" NASA helps us answer that question with real satellite observation data.",
+    chao_nut_batdau: "🌍 Start Exploring",
+    chao_nut_tuantra: "🚨 Green Patrol Squad",
+    chao_nut_huongdan: "❓ How to Play",
+
+    map_tieude: "🌍 Explore",
+    map_goiy: "Pick a spot on Earth you want to hear and see NASA data about",
+
+    tai_dangtai: "Contacting NASA satellites...",
+    tai_dangtai_ten: "🛰️ Contacting NASA satellites about ",
+    tai_loi: "😅 Couldn't get NASA data, please try again!",
+
+    nghe_goiy: "NASA is watching this place from space. Tap Listen to hear what it \"sounds\" like!",
+    nghe_phuxanh: "🌿 Vegetation",
+    nghe_nhietdo: "🌡️ Temperature",
+    nghe_mua: "🌧️ Rainfall",
+    nghe_nut_nghe: "🎧 Listen",
+    nghe_muc: "🔊 Level: ",
+    nghe_xuhuong_tang: " · 📈 up from last reading",
+    nghe_xuhuong_giam: " · 📉 down from last reading",
+    nghe_nut_mucluc: "📖 Sound Guide: what does each sound mean?",
+    nghe_nut_hochoi: "📚 Learn about this place",
+    nghe_nut_tiep: "🎨 Next: Draw Your Prediction",
+    nghe_nut_doanhinh: "🖼️ Quiz: Guess the Image by Sound",
+
+    eic_dangtai: "🛰️ Loading a visual frame from the Earth Information Center...",
+    eic_nhan: "🛰️ Real NASA MODIS image, from the same date as the data below",
+    eic_loi: "😅 Couldn't load today's satellite image (maybe clouds or network) -- no worries, the sound still matches NASA's real data!",
+
+    doanhinh_tieude: "🖼️ Listen & Guess the Image!",
+    doanhinh_goiy: "Tap to replay the sound, then guess WHICH satellite image is really this place.",
+    doanhinh_nut_nghe: "🎧 Replay the sound",
+    doanhinh_nut_khac: "🔄 Try another round",
+    doanhinh_dung: "🎯 Correct! Your ears are sharp!",
+    doanhinh_sai: "😅 Not quite -- the one with the green border is the real image of {ten}. Try another round!",
+
+    ve_tieude: "🎨 What do you imagine this place looks like?",
+    ve_goiy: "Based on the sound you heard, tap the level you think is right",
+    ve_hoi_phuxanh: "🌿 How much vegetation do you think this place has?",
+    ve_hoi_nhietdo: "🌡️ What do you guess the average temperature here is?",
+    ve_hoi_mua: "🌧️ Do you think it rains a lot here?",
+    ve_nut_nghelai: "🎧 Listen Again",
+    ve_nut_chot: "🔒 Lock In & See NASA",
+
+    sosanh_tieude: "🛰️ What does NASA see?",
+    sosanh_cot_em: "🎨 Your Guess",
+    sosanh_cot_nasa: "🛰️ NASA's Data",
+    sosanh_nhan_phuxanh: "🌿 Vegetation (NDVI)",
+    sosanh_nhan_nhietdo: "🌡️ Temperature",
+    sosanh_nhan_mua: "🌧️ Rain (mm/day)",
+    sosanh_em_nasa: "You: {a} ({amuc}) · NASA: {b} ({bmuc})",
+    sosanh_ngaydo: "📅 Vegetation measured on",
+    sosanh_chatluong: "📡 Image quality",
+    sosanh_troiquang: "Clear sky",
+    sosanh_mayche: "Cloud cover",
+    sosanh_nx_gan: "🎯 Your ears are sharp! Your vegetation guess was very close to NASA's data.",
+    sosanh_nx_kha: "👂 Pretty close! Sound gives good clues, but NASA's real data is always the most accurate.",
+    sosanh_nx_xa: "🔍 Interesting, your guess was quite different from NASA. That's why scientists always need to verify with real data!",
+    sosanh_diem_chua: "No stars this time",
+    sosanh_diem_luot: "This round you got {n}/3 levels right",
+    sosanh_diem_tong: "🏆 Total stars so far: {n}",
+    thoitiet_tieude: "📅 NASA's most recent weather data",
+    thoitiet_ngay: "On {ngay}: <b>{temp}°C</b>, rain <b>{mua} mm/day</b>.",
+    thoitiet_ghichu: "Note: NASA needs a few days to process data, so this is the MOST RECENT data available, not this exact moment.",
+    sosanh_nut_tiep: "🌱 Next: My Green Corner",
+    sosanh_nut_khac: "⬅ Explore another place",
+
+    hochoi_tieude: "📚 Learn",
+    hochoi_nut_quaylai: "⬅ Back to Listen",
+    hochoi_ndvi_tieude: "🌿 What is NDVI?",
+    hochoi_ndvi_giaithich: "NDVI is a NASA index that measures how green and healthy vegetation looks from satellites, on a scale from 0 (bare ground) to 1 (very dense vegetation). NDVI doesn't count individual trees -- it shows how green the land surface looks overall.",
+    hochoi_dulieu_tieude: "📊 NASA data for {ten}",
+    hochoi_dong_phuxanh: "🌿 Vegetation (NDVI): <b>{gt}</b> — {muc} level. This place is {giaithich}",
+    hochoi_dong_nhietdo: "🌡️ Average annual temperature: <b>{gt}°C</b> — {muc} level. This place has {giaithich}",
+    hochoi_dong_mua: "🌧️ Average rainfall: <b>{gt} mm/day</b> — {muc} level. This place gets {giaithich}",
+    hochoi_nguon_tieude: "🛰️ Data sources",
+    hochoi_nguon_phuxanh: "Vegetation: NASA MODIS/Terra Vegetation Indices (via NASA ORNL DAAC), most recent clear-sky image, dated {ngay}.",
+    hochoi_nguon_thoitiet: "Temperature & rainfall: NASA POWER, {nam} annual average.",
+
+    tuantra_tieude: "🚨 Green Patrol Squad",
+    tuantra_goiy: "Pick a country. According to NASA data, which spot needs trees planted the most?",
+    tuantra_diem_ungvien: "{n} candidate spots",
+    tuantra_dangtai: "🛰️ Collecting vegetation data for {ten} ...",
+    tuantra_doan_goiy: "Tap the tiles ONE BY ONE, from the place you think has the LEAST vegetation to the MOST. Don't peek at the data yet!",
+    tuantra_tiendo: "✅ {da}/{tong} selected — tap the rest to unlock the button below!",
+    tuantra_tiendo_xong: "✅ All {tong}/{tong} selected! Tap the button below to see the results.",
+    tuantra_nut_chonlai: "🔄 Reset Order",
+    tuantra_nut_xemketqua: "🛰️ See NASA's Ranking",
+    tuantra_ketqua_tieude: "🛰️ NASA's Ranking",
+    tuantra_xephang_that: "🛰️ NASA's real ranking (from least vegetation)",
+    tuantra_xephang_em: "🎨 Your guessed order",
+    tuantra_nx_ca2: "🎯 Excellent! You correctly identified both the spot that NEEDS TREES MOST and the GREENEST spot!",
+    tuantra_nx_dau: "👍 You correctly guessed the spot that needs trees most ({dau})! The greenest spot was actually {cuoi}.",
+    tuantra_nx_cuoi: "👍 You correctly guessed the greenest spot ({cuoi})! The spot that needs trees most was actually {dau}.",
+    tuantra_nx_khong: "🔍 Interesting! The spot that really needs trees most is {dau} (NDVI {ndvi}), and the greenest is {cuoi}.",
+    tuantra_diem_hoi: "🌱 If it were you, why do you think {ten} has less vegetation than the other places?",
+    tuantra_nut_khac: "🚨 Patrol another country",
+    tuantra_nut_trangchu: "🏠 Back to home",
+
+    huongdan_tieude: "❓ How to Play",
+    huongdan_1_tieude: "1. 🌍 Explore",
+    huongdan_1_noidung: "Pick a spot on Earth (a city, forest, desert...) you want to learn about.",
+    huongdan_2_tieude: "2. 🎧 Listen",
+    huongdan_2_noidung: "Listen to NASA's data \"tell you\" about vegetation, temperature, and rainfall there -- but you won't see the numbers yet.",
+    huongdan_3_tieude: "3. 📚 Learn (optional)",
+    huongdan_3_noidung: "See a summary of knowledge and NASA data about that place if you want to learn more.",
+    huongdan_4_tieude: "4. 🎨 Draw Your Prediction",
+    huongdan_4_noidung: "Based on the sound you heard, tap the vegetation, temperature, and rainfall levels you THINK are right. The drawing will change to match your choices.",
+    huongdan_5_tieude: "5. 🛰️ See What NASA Sees",
+    huongdan_5_noidung: "Compare your guess with NASA's real data. Each level you guess correctly earns +1⭐, up to 3⭐ per round.",
+    huongdan_6_tieude: "6. 🌱 My Green Corner",
+    huongdan_6_noidung: "Come back to a small action where you live: plant and care for a real green corner.",
+    huongdan_tuantra_tieude: "🚨 Green Patrol Squad (bonus mode)",
+    huongdan_tuantra_noidung: "Pick a country, then tap the candidate spots ONE BY ONE to rank them, from the place you think has the LEAST vegetation to the MOST. Guessing the least-vegetation spot right earns +2⭐, the greenest spot right earns +1⭐ (up to 3⭐ per round).",
+    huongdan_nut_batdau: "Got it, let's play!",
+
+    gocxanh_tieude: "🌱 My Green Corner",
+    gocxanh_goiy: "NASA watches Earth from space. And you can observe and care for the green around where you live!",
+    gocxanh_goiy1: "🪴 Find a small spot near your home or school to plant or care for a tree.",
+    gocxanh_goiy2: "👀 Every week, observe how the plant changes (leaves, height, color).",
+    gocxanh_goiy3: "📸 Take photos or draw your green corner over time.",
+    gocxanh_placeholder: "Where is your green corner? What will you plant or take care of?",
+    gocxanh_nut_luu: "💾 Save",
+    gocxanh_daluu: "✅ Saved to your device!",
+    gocxanh_nut_khac: "🌍 Explore another place"
+  }
+};
+
+// Lấy 1 chuỗi theo ngôn ngữ hiện tại, có thể thay {ten} bằng giá trị thật.
+function T(khoa, giaTri) {
+  let s = (TU_DIEN[ngonNguHienTai] && TU_DIEN[ngonNguHienTai][khoa]) || TU_DIEN.vi[khoa] || khoa;
+  if (giaTri) {
+    Object.keys(giaTri).forEach(function (k) {
+      s = s.split("{" + k + "}").join(giaTri[k]);
+    });
+  }
+  return s;
+}
+
+// Áp dụng ngôn ngữ hiện tại lên mọi phần tử tĩnh có data-i18n, và vẽ lại
+// các danh sách động (khu vực, điểm thưởng) theo ngôn ngữ mới.
+function apDungNgonNgu() {
+  document.querySelectorAll("[data-i18n]").forEach(function (el) {
+    el.innerHTML = T(el.getAttribute("data-i18n"));
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
+    el.placeholder = T(el.getAttribute("data-i18n-placeholder"));
+  });
+  const nutNgonNgu = document.getElementById("nut-doi-ngonngu");
+  if (nutNgonNgu) nutNgonNgu.textContent = ngonNguHienTai === "en" ? "🇬🇧 EN" : "🇻🇳 VI";
+  veDanhSachKhuVuc();
+  veDanhSachQuocGia();
+  capNhatHienThiDiem();
+}
+function doiNgonNgu() {
+  ngonNguHienTai = ngonNguHienTai === "en" ? "vi" : "en";
+  try { localStorage.setItem("greenCorner_ngonNgu", ngonNguHienTai); } catch (e) { /* bỏ qua */ }
+  apDungNgonNgu();
+}
+
+// ---------- Danh sách khu vực (khớp với bản đồ) ----------
+// "tenEn"/"moTaEn" chỉ được DÙNG (hiển thị) ở 5 màn chính đã hỗ trợ tiếng
+// Anh (chào, khám phá, đang tải, lắng nghe, vẽ tranh, so sánh) qua hàm
+// tenKhuVuc()/moTaKhuVuc() bên dưới. Các màn khác (Học Hỏi, Đội Tuần Tra
+// Xanh...) vẫn cố tình dùng thẳng kv.ten/kv.moTa (tiếng Việt) như cũ --
+// chưa đụng tới để tránh rủi ro, sẽ làm ở bước 2.
+const KHU_VUC = [
+  { id: "hanoi", ten: "Hà Nội", tenEn: "Hanoi", moTa: "thủ đô, đồng bằng Bắc Bộ", moTaEn: "capital, Red River Delta", emoji: "🏙️", mau: "t-blue", lat: 21.0285, lon: 105.8542 },
+  { id: "hcm", ten: "TP. Hồ Chí Minh", tenEn: "Ho Chi Minh City", moTa: "đô thị lớn nhất Việt Nam", moTaEn: "Vietnam's largest city", emoji: "🌆", mau: "t-yellow", lat: 10.8231, lon: 106.6297 },
+  { id: "danang", ten: "Đà Nẵng", tenEn: "Da Nang", moTa: "thành phố biển miền Trung", moTaEn: "coastal city in central Vietnam", emoji: "🏖️", mau: "t-blue", lat: 16.0544, lon: 108.2022 },
+  { id: "dalat", ten: "Đà Lạt, Lâm Đồng", tenEn: "Da Lat, Lam Dong", moTa: "cao nguyên nhiều rừng thông", moTaEn: "highland plateau with pine forests", emoji: "⛰️", mau: "t-green", lat: 11.9404, lon: 108.4583 },
+  { id: "cantho", ten: "Cần Thơ", tenEn: "Can Tho", moTa: "đồng bằng sông Cửu Long", moTaEn: "Mekong Delta", emoji: "🌾", mau: "t-green", lat: 10.0452, lon: 105.7469 },
+  { id: "sapa", ten: "Sa Pa, Lào Cai", tenEn: "Sa Pa, Lao Cai", moTa: "vùng núi cao phía Bắc", moTaEn: "mountainous region in the north", emoji: "🏔️", mau: "t-blue", lat: 22.3364, lon: 103.8438 },
+  { id: "amazon", ten: "Rừng Amazon, Brazil", tenEn: "Amazon Rainforest, Brazil", moTa: "rừng nhiệt đới rậm rạp", moTaEn: "dense tropical rainforest", emoji: "🌳", mau: "t-green", lat: -3.4653, lon: -62.2159 },
+  { id: "saopaulo", ten: "São Paulo, Brazil", tenEn: "São Paulo, Brazil", moTa: "đô thị lớn nhất Brazil", moTaEn: "Brazil's largest city", emoji: "🏢", mau: "t-yellow", lat: -23.5505, lon: -46.6333 },
+  { id: "cerrado", ten: "Cerrado, Brazil", tenEn: "Cerrado, Brazil", moTa: "vùng nông nghiệp từng là rừng", moTaEn: "farmland that was once forest", emoji: "🚜", mau: "t-yellow", lat: -16.4673, lon: -54.6372 },
+  { id: "sahara", ten: "Sa mạc Sahara", tenEn: "Sahara Desert", moTa: "vùng đất khô cằn", moTaEn: "arid desert region", emoji: "🏜️", mau: "t-yellow", lat: 23.4162, lon: 25.6628 },
+
+  // Mỹ
+  { id: "newyork", ten: "New York, Mỹ", tenEn: "New York, USA", moTa: "đô thị đông đúc", moTaEn: "densely populated city", emoji: "🗽", mau: "t-blue", lat: 40.6782, lon: -73.9442 },
+  { id: "phoenix", ten: "Phoenix, Mỹ", tenEn: "Phoenix, USA", moTa: "sa mạc Arizona", moTaEn: "Arizona desert", emoji: "🌵", mau: "t-yellow", lat: 33.4484, lon: -112.0740 },
+  { id: "olympicforest", ten: "Rừng Olympic, Mỹ", tenEn: "Olympic Forest, USA", moTa: "rừng ôn đới bang Washington", moTaEn: "temperate forest in Washington State", emoji: "🌲", mau: "t-green", lat: 47.8021, lon: -123.6044 },
+
+  // Anh (UK)
+  { id: "london", ten: "London, Anh", tenEn: "London, UK", moTa: "thủ đô nước Anh", moTaEn: "capital of England", emoji: "🏛️", mau: "t-blue", lat: 51.5074, lon: -0.1278 },
+  { id: "lakedistrict", ten: "Lake District, Anh", tenEn: "Lake District, UK", moTa: "vùng đồi hồ nhiều cây xanh", moTaEn: "hilly, green lake region", emoji: "⛰️", mau: "t-green", lat: 54.4609, lon: -3.0886 },
+  { id: "norfolk", ten: "Norfolk, Anh", tenEn: "Norfolk, UK", moTa: "vùng nông nghiệp bằng phẳng", moTaEn: "flat farmland region", emoji: "🌾", mau: "t-yellow", lat: 52.6304, lon: 0.8228 },
+
+  // Singapore
+  { id: "sg_trungtam", ten: "Trung tâm Singapore", tenEn: "Downtown Singapore", moTa: "khu đô thị dày đặc", moTaEn: "dense urban district", emoji: "🏙️", mau: "t-blue", lat: 1.2839, lon: 103.8607 },
+  { id: "sg_bukittimah", ten: "Bukit Timah, Singapore", tenEn: "Bukit Timah, Singapore", moTa: "rừng nguyên sinh còn sót lại", moTaEn: "last patch of primary rainforest", emoji: "🌳", mau: "t-green", lat: 1.3504, lon: 103.7764 },
+  { id: "sg_jurong", ten: "Jurong, Singapore", tenEn: "Jurong, Singapore", moTa: "khu công nghiệp", moTaEn: "industrial district", emoji: "🏭", mau: "t-yellow", lat: 1.2660, lon: 103.6900 },
+
+  // Úc
+  { id: "sydney", ten: "Sydney, Úc", tenEn: "Sydney, Australia", moTa: "đô thị lớn nhất Úc", moTaEn: "Australia's largest city", emoji: "🏙️", mau: "t-blue", lat: -33.8688, lon: 151.2093 },
+  { id: "outback", ten: "Outback, Úc", tenEn: "Outback, Australia", moTa: "vùng nội địa khô cằn", moTaEn: "arid interior region", emoji: "🏜️", mau: "t-yellow", lat: -25.0, lon: 137.0 },
+  { id: "daintree", ten: "Rừng Daintree, Úc", tenEn: "Daintree Forest, Australia", moTa: "rừng nhiệt đới cổ nhất thế giới", moTaEn: "world's oldest rainforest", emoji: "🌴", mau: "t-green", lat: -16.1700, lon: 145.4189 },
+
+  // Trung Quốc
+  { id: "beijing", ten: "Bắc Kinh, Trung Quốc", tenEn: "Beijing, China", moTa: "thủ đô Trung Quốc", moTaEn: "capital of China", emoji: "🏯", mau: "t-blue", lat: 39.9042, lon: 116.4074 },
+  { id: "dunhuang", ten: "Đôn Hoàng, Trung Quốc", tenEn: "Dunhuang, China", moTa: "rìa sa mạc Gobi", moTaEn: "edge of the Gobi Desert", emoji: "🏜️", mau: "t-yellow", lat: 40.0, lon: 94.5 },
+  { id: "xishuangbanna", ten: "Tây Song Bản Nạp, Trung Quốc", tenEn: "Xishuangbanna, China", moTa: "rừng nhiệt đới Vân Nam", moTaEn: "tropical rainforest in Yunnan", emoji: "🌴", mau: "t-green", lat: 21.9, lon: 101.2 }
+];
+
+// Dùng ở 5 màn chính đã hỗ trợ song ngữ -- các màn khác vẫn dùng thẳng
+// kv.ten/kv.moTa (tiếng Việt) như trước, không bị ảnh hưởng.
+function tenKhuVuc(kv) { return ngonNguHienTai === "en" ? kv.tenEn : kv.ten; }
+function moTaKhuVuc(kv) { return ngonNguHienTai === "en" ? kv.moTaEn : kv.moTa; }
+
+// ---------- Nhiệm vụ: Đội Tuần Tra Xanh (game hóa xếp hạng theo quốc gia) ----------
+// Mỗi quốc gia có sẵn vài điểm ỨNG VIÊN thật (không phải quét toàn bộ bản đồ --
+// NASA MODIS API chỉ trả 1 điểm/lần gọi, quét cả nước cần máy chủ xử lý ảnh
+// riêng, ngoài khả năng của 1 trang web tĩnh). Người chơi đoán điểm ít xanh
+// nhất, rồi so với xếp hạng NDVI thật từ NASA.
+const NHIEM_VU_QUOCGIA = [
+  { id: "vietnam", ten: "🇻🇳 Việt Nam", tenEn: "🇻🇳 Vietnam", diaDiemIds: ["hanoi", "hcm", "danang", "dalat", "cantho", "sapa"] },
+  { id: "brazil", ten: "🇧🇷 Brazil", tenEn: "🇧🇷 Brazil", diaDiemIds: ["amazon", "saopaulo", "cerrado"] },
+  { id: "usa", ten: "🇺🇸 Mỹ", tenEn: "🇺🇸 USA", diaDiemIds: ["newyork", "phoenix", "olympicforest"] },
+  { id: "uk", ten: "🇬🇧 Anh (UK)", tenEn: "🇬🇧 UK", diaDiemIds: ["london", "lakedistrict", "norfolk"] },
+  { id: "singapore", ten: "🇸🇬 Singapore", tenEn: "🇸🇬 Singapore", diaDiemIds: ["sg_trungtam", "sg_bukittimah", "sg_jurong"] },
+  { id: "australia", ten: "🇦🇺 Úc", tenEn: "🇦🇺 Australia", diaDiemIds: ["sydney", "outback", "daintree"] },
+  { id: "china", ten: "🇨🇳 Trung Quốc", tenEn: "🇨🇳 China", diaDiemIds: ["beijing", "dunhuang", "xishuangbanna"] }
+];
+function tenQuocGia(qg) { return ngonNguHienTai === "en" ? qg.tenEn : qg.ten; }
+let tuanTraHienTai = null; // { quocGia, diemDuLieu, idDaChon }
+
+const duLieuDaTai = {}; // id khu vực -> { ndvi, ndviNgay, ndviDangTinCay, tempC, rainMmNgay }
+let khuVucHienTai = null;
+let duDoanHienTai = { ndvi: 0.5, tempC: 20, rainMmNgay: 2 };
+
+// ---------- Điểm thưởng ----------
+// Mỗi lần chốt dự đoán, mỗi chỉ số đoán ĐÚNG MỨC (thấp/vừa/cao) so với
+// NASA được +1 sao (tối đa 3 sao/lượt). Điểm cộng dồn, lưu vào máy.
+let diemTichLuy = 0;
+try { diemTichLuy = parseInt(localStorage.getItem("greenCorner_diem"), 10) || 0; } catch (e) { /* bỏ qua */ }
+const MOC_DANH_HIEU = [
+  { moc: 20, ten: "🏅 Chuyên Gia Xanh", tenEn: "🏅 Green Expert" },
+  { moc: 10, ten: "🌟 Nhà Khoa Học Nhí", tenEn: "🌟 Junior Scientist" },
+  { moc: 3, ten: "🌱 Người Khám Phá", tenEn: "🌱 Explorer" }
+];
+function layDanhHieu(diem) {
+  const dh = MOC_DANH_HIEU.find(function (m) { return diem >= m.moc; });
+  if (!dh) return "";
+  return ngonNguHienTai === "en" ? dh.tenEn : dh.ten;
+}
+function capNhatHienThiDiem() {
+  const danhHieu = layDanhHieu(diemTichLuy);
+  const chuSao = ngonNguHienTai === "en"
+    ? diemTichLuy + " star" + (diemTichLuy === 1 ? "" : "s")
+    : diemTichLuy + " sao";
+  document.querySelectorAll(".diem-hien-thi").forEach(function (el) {
+    el.textContent = "🏆 " + chuSao + (danhHieu ? " · " + danhHieu : "");
+  });
+}
+function congDiem(soSao) {
+  diemTichLuy += soSao;
+  try { localStorage.setItem("greenCorner_diem", String(diemTichLuy)); } catch (e) { /* bỏ qua */ }
+  capNhatHienThiDiem();
+}
+
+// ---------- Chuyển màn hình ----------
+function hienManHinh(idMan) {
+  document.querySelectorAll(".screen").forEach(function (el) {
+    el.classList.toggle("active", el.id === idMan);
+  });
+}
+
+function moMucLuc() { document.getElementById("lop-phu-mucluc").classList.add("active"); }
+function dongMucLuc() { document.getElementById("lop-phu-mucluc").classList.remove("active"); }
+
+// ---------- Vẽ danh sách khu vực ----------
+function veDanhSachKhuVuc() {
+  const box = document.getElementById("danh-sach-khu-vuc");
+  box.innerHTML = "";
+  KHU_VUC.forEach(function (kv) {
+    const el = document.createElement("div");
+    el.className = "tile " + kv.mau;
+    el.innerHTML =
+      "<div class='emoji'>" + kv.emoji + "</div>" +
+      "<div class='label'>" + tenKhuVuc(kv) + "</div>" +
+      "<div class='sub'>" + moTaKhuVuc(kv) + "</div>";
+    el.onclick = function () { chonKhuVuc(kv.id); };
+    box.appendChild(el);
+  });
+}
+
+// ---------- PHÂN LOẠI dữ liệu thành 3 mức: thấp / vừa / cao ----------
+// Đây là "quy tắc rõ ràng" biến số liệu NASA thành mức độ để tạo âm thanh.
+function phanLoaiPhuXanh(ndvi) {
+  if (ndvi < 0.3) return "thap";
+  if (ndvi < 0.6) return "vua";
+  return "cao";
+}
+function phanLoaiNhietDo(doC) {
+  if (doC < 15) return "thap";
+  if (doC <= 25) return "vua";
+  return "cao";
+}
+function phanLoaiMua(mmNgay) {
+  if (mmNgay < 1) return "thap";
+  if (mmNgay <= 4) return "vua";
+  return "cao";
+}
+const NHAN_MUC_DO = { thap: "Thấp", vua: "Trung bình", cao: "Cao" };
+// Bản tiếng Anh riêng, chỉ dùng ở 5 màn chính (qua hàm nhanMucDo() dưới
+// đây) -- KHÔNG đổi NHAN_MUC_DO gốc vì màn Học Hỏi vẫn đang dùng trực tiếp.
+const NHAN_MUC_DO_EN = { thap: "Low", vua: "Medium", cao: "High" };
+function nhanMucDo(ma) { return ngonNguHienTai === "en" ? NHAN_MUC_DO_EN[ma] : NHAN_MUC_DO[ma]; }
+
+// ---------- ÂM THANH: giai điệu "lofi" vui/buồn theo dữ liệu ----------
+// LƯU Ý: Artlist.io là dịch vụ nhạc TRẢ PHÍ (mua gói mới được tải), không
+// phải kho miễn phí -- mình không thể tải nhạc từ đó về dùng vì sẽ vi
+// phạm bản quyền. Thay vào đó, mình TỰ TẠO nhạc bằng Web Audio: lọc bớt
+// tần số cao cho êm ấm kiểu lofi, không cần file hay internet.
+//
+// Quy tắc rõ ràng, giống nhau cho cả 3 loại dữ liệu. Dùng cả thang âm
+// Đô-Rê-Mi-Fa-Sol-La-Si-Đô trải RỘNG hơn 2 quãng 8 (không chỉ 3 nốt sát
+// nhau) để 3 mức nghe khác biệt thật rõ, không bị nhầm:
+//   Mức CAO   -> giai điệu VUI NHỘN: quãng CAO (Đô5-Mi5-Sol5), gam trưởng, đi lên, nhanh
+//   Mức VỪA   -> giai điệu bình thường: quãng GIỮA (Đô4-Rê4-Mi4-Fa4), vừa phải
+//   Mức THẤP  -> giai điệu BUỒN NHẸ: quãng TRẦM (La3-Sol3-Fa3), gam thứ, đi xuống, chậm
+// Âm sắc (triangle/sine, độ "ấm" của bộ lọc) cho biết đang nghe LOẠI dữ
+// liệu nào (phủ xanh / nhiệt độ / mưa).
+const GIAI_DIEU_THEO_MUC = {
+  thap: { // buồn nhẹ, quãng trầm, đi xuống chậm rãi
+    not: [220.0, 196.0, 174.61], // La3 - Sol3 - Fa3 (giáng dần)
+    cachQuangGiay: 0.42, thoiLuongMoiNot: 0.55
+  },
+  vua: { // bình thường, quãng giữa
+    not: [261.63, 293.66, 329.63, 349.23], // Đô4 - Rê4 - Mi4 - Fa4
+    cachQuangGiay: 0.26, thoiLuongMoiNot: 0.35
+  },
+  cao: { // vui nhộn, quãng cao, đi lên rộn ràng, nhanh
+    not: [523.25, 587.33, 659.25, 783.99], // Đô5 - Rê5 - Mi5 - Sol5
+    cachQuangGiay: 0.14, thoiLuongMoiNot: 0.2
+  }
+};
+let audioContext = null;
+function layAudioContext() {
+  if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  return audioContext;
+}
+// Phát 1 nốt "ấm" kiểu lofi: 2 dao động lệch nhẹ (cho dày tiếng) + lọc
+// bớt tần số cao (cho êm, không chói) + vào/tắt tiếng nhẹ nhàng.
+// doAmTanSo càng thấp thì tiếng càng "trầm đục" hơn (dùng để phân biệt
+// loại dữ liệu -- ví dụ mưa nghe trầm/ẩm hơn nhiệt độ).
+// lechCentThem (mới, TUỲ CHỌN -- mặc định 0 nên các chỗ gọi cũ không đổi
+// tiếng chút nào): độ lệch cao độ thêm, tính bằng cent, cộng dồn vào 2 lớp
+// lệch có sẵn. Đây là chỗ mình đưa GIÁ TRỊ THẬT (không chỉ mức thấp/vừa/cao)
+// vào ảnh hưởng trực tiếp tới cao độ nghe được.
+function phatMotNotLofi(tanSo, loaiSong, thoiLuong, doAmTanSo, lechCentThem) {
+  const ctx = layAudioContext();
+  const now = ctx.currentTime;
+  const themCent = lechCentThem || 0;
+
+  const loc = ctx.createBiquadFilter();
+  loc.type = "lowpass";
+  loc.frequency.value = doAmTanSo || 1400;
+  loc.connect(ctx.destination);
+
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.15, now + 0.06);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + thoiLuong);
+  gain.connect(loc);
+
+  [0, -7].forEach(function (lechCent) { // 2 lớp lệch nhẹ = tiếng dày ấm hơn
+    const osc = ctx.createOscillator();
+    osc.type = loaiSong;
+    osc.frequency.value = tanSo;
+    osc.detune.value = lechCent + themCent;
+    osc.connect(gain);
+    osc.start(now);
+    osc.stop(now + thoiLuong + 0.05);
+  });
+}
+// Dùng chung cho cả 3 loại dữ liệu: phát đúng GIAI ĐIỆU vui/buồn theo mức độ.
+function phatGiaiDieuTheoMuc(mucDo, loaiSong, doAmTanSo, lechCentThem) {
+  const cauHinh = GIAI_DIEU_THEO_MUC[mucDo];
+  cauHinh.not.forEach(function (tanSo, i) {
+    setTimeout(function () {
+      phatMotNotLofi(tanSo, loaiSong, cauHinh.thoiLuongMoiNot, doAmTanSo, lechCentThem);
+    }, i * cauHinh.cachQuangGiay * 1000);
+  });
+}
+
+// ---------- ÂM THANH "DATA-RICH" HƠN: dùng GIÁ TRỊ THẬT, không chỉ mức ----------
+// Trước đây: NASA value -> ép về 1 trong 3 mức -> chọn 1 trong 3 giai điệu
+// cố định. Vậy 2 nơi CÙNG mức "Cao" (vd NDVI 0.62 và NDVI 0.98) nghe Y HỆT
+// nhau. Giờ mình giữ nguyên 3 giai điệu (vẫn cần cho cảm xúc vui/buồn dễ
+// nhận ra), nhưng THÊM 1 lớp biến thiên LIÊN TỤC ngay trong mỗi mức, tính
+// thẳng từ số liệu thật -- 2 nơi cùng mức "Cao" giờ sẽ nghe hơi khác nhau.
+
+// Vị trí TƯƠNG ĐỐI của 1 giá trị trong 1 dải [bienDuoi, bienTren] -> số
+// trong đoạn [0,1]. 0 = sát đầu dưới dải, 1 = sát đầu trên dải.
+function viTriTrongDai(giaTri, bienDuoi, bienTren) {
+  if (bienTren <= bienDuoi) return 0.5;
+  return Math.max(0, Math.min(1, (giaTri - bienDuoi) / (bienTren - bienDuoi)));
+}
+// Đổi vị trí trong dải [0,1] thành độ lệch cao độ (cent), trải đều quanh 0
+// (vd 0 -> -35 cent, 0.5 -> 0 cent, 1 -> +35 cent). 35 cent đủ để tai nghe
+// ra sự khác biệt nhưng không phá giai điệu gốc.
+function lechCentTuViTri(viTri) { return (viTri - 0.5) * 70; }
+
+// Biên thực tế của từng mức, dùng để tính viTriTrongDai() -- khớp với
+// phanLoaiPhuXanh/phanLoaiNhietDo/phanLoaiMua ở trên.
+const BIEN_MUC = {
+  phuxanh: { thap: [0, 0.3], vua: [0.3, 0.6], cao: [0.6, 1] }, // NDVI 0-1
+  nhietdo: { thap: [-10, 15], vua: [15, 25], cao: [25, 45] }, // °C
+  mua: { thap: [0, 1], vua: [1, 4], cao: [4, 15] } // mm/ngày
+};
+// Ngưỡng thay đổi TỐI THIỂU để tính là "có xu hướng" (tránh nhiễu số thập
+// phân rất nhỏ bị hiểu nhầm thành tăng/giảm). Dùng chung cho cả phần ÂM
+// THANH (nốt bè) và phần CHỮ hiển thị, để 2 nơi luôn khớp nhau.
+const NGUONG_XU_HUONG = { phuxanh: 0.03, nhietdo: 0.5, mua: 0.3 };
+
+// ---------- NỐT BÈ XU HƯỚNG: so với lần đo/năm TRƯỚC ----------
+// Bản ĐƠN GIẢN (không dùng hiệu ứng vang/ConvolverNode phức tạp): thêm 1
+// nốt "bè" nhẹ ở quãng 5 ngay sau giai điệu chính -- bè CAO hơn nếu giá trị
+// TĂNG so với lần đo trước, bè THẤP hơn nếu GIẢM. Không đủ dữ liệu so sánh,
+// hoặc thay đổi quá nhỏ (dưới ngưỡng) -> im lặng, không đoán bừa xu hướng.
+function huongThayDoi(hienTai, truoc, nguong) {
+  if (hienTai == null || truoc == null) return 0;
+  const chenhLech = hienTai - truoc;
+  if (Math.abs(chenhLech) < nguong) return 0;
+  return chenhLech > 0 ? 1 : -1;
+}
+function phatNotBeXuHuong(tanSoGoc, huong, doAmTanSo) {
+  if (!huong) return;
+  const tiLeQuang5 = huong > 0 ? 1.5 : (2 / 3); // +quãng 5 nếu tăng, -quãng 5 nếu giảm
+  setTimeout(function () {
+    phatMotNotLofi(tanSoGoc * tiLeQuang5, "sine", 0.5, doAmTanSo);
+  }, 1700);
+}
+
+function phatAmPhuXanh(mucDo, ndvi, ndviTruoc) {
+  const dai = BIEN_MUC.phuxanh[mucDo];
+  const lech = ndvi == null ? 0 : lechCentTuViTri(viTriTrongDai(ndvi, dai[0], dai[1]));
+  phatGiaiDieuTheoMuc(mucDo, "triangle", 1600, lech);
+  phatNotBeXuHuong(GIAI_DIEU_THEO_MUC[mucDo].not[0], huongThayDoi(ndvi, ndviTruoc, NGUONG_XU_HUONG.phuxanh), 1600);
+}
+function phatAmNhietDo(mucDo, tempC, tempCNamTruoc) {
+  const dai = BIEN_MUC.nhietdo[mucDo];
+  const lech = tempC == null ? 0 : lechCentTuViTri(viTriTrongDai(tempC, dai[0], dai[1]));
+  // Âm sắc (độ sáng/tối của bộ lọc) cũng chuyển LIÊN TỤC theo nhiệt độ thật,
+  // không chỉ 1 con số cố định -- nóng hơn nghe "sáng" hơn, lạnh hơn nghe "tối" hơn.
+  const locTanSo = tempC == null ? 1400 : 600 + viTriTrongDai(tempC, -10, 40) * 5000;
+  phatGiaiDieuTheoMuc(mucDo, "sine", locTanSo, lech);
+  phatNotBeXuHuong(GIAI_DIEU_THEO_MUC[mucDo].not[0], huongThayDoi(tempC, tempCNamTruoc, NGUONG_XU_HUONG.nhietdo), locTanSo);
+}
+function phatAmMua(mucDo, rainMmNgay, rainMmNgayNamTruoc) { // lọc thấp hơn = nghe trầm/ẩm như mưa
+  const dai = BIEN_MUC.mua[mucDo];
+  const lech = rainMmNgay == null ? 0 : lechCentTuViTri(viTriTrongDai(rainMmNgay, dai[0], dai[1]));
+  phatGiaiDieuTheoMuc(mucDo, "sine", 900, lech);
+  phatNotBeXuHuong(GIAI_DIEU_THEO_MUC[mucDo].not[0], huongThayDoi(rainMmNgay, rainMmNgayNamTruoc, NGUONG_XU_HUONG.mua), 900);
+  if (rainMmNgay == null) return;
+  phatHatMuaTheoLuong(rainMmNgay);
+}
+// Thêm các tiếng "tí tách" nhỏ sau giai điệu chính, SỐ LƯỢNG tỉ lệ thuận
+// với lượng mưa thật -- mưa càng nhiều, tiếng giọt rơi càng rộn ràng. Đây
+// là phần "động" nhất: nghe được ngay sự khác biệt giữa 0.5mm và 8mm/ngày,
+// điều mà 3 mức cố định trước đây không thể hiện được.
+function phatHatMuaTheoLuong(rainMmNgay) {
+  const soHat = Math.round(Math.max(0, Math.min(10, rainMmNgay)));
+  for (let i = 0; i < soHat; i++) {
+    setTimeout(function () {
+      const tanSoHat = 650 + Math.random() * 500; // cao độ hơi ngẫu nhiên, như giọt nước rơi
+      phatMotNotLofi(tanSoHat, "sine", 0.12, 2400);
+    }, 1500 + i * (85 + Math.random() * 70));
+  }
+}
+
+// ---------- KHUNG HÌNH THẬT TỪ NASA EARTH INFORMATION CENTER (Worldview) ----------
+// NASA Worldview Snapshot API: ảnh vệ tinh MODIS thật, ĐÚNG NGÀY mình chọn,
+// miễn phí và không cần key. Đây là "visual frame" thật của NASA, ghép cùng
+// âm thanh (sonification) để khớp đúng tinh thần đề bài "Earth Jukebox".
+const WORLDVIEW_SNAPSHOT_GOC = "https://wvs.earthdata.nasa.gov/api/v1/snapshot";
+function urlAnhVeTinh(lat, lon, ngayISO, doRong) {
+  const nuaCanh = 1.5; // độ, ~330km mỗi cạnh quanh điểm quan sát
+  const bbox = [lat - nuaCanh, lon - nuaCanh, lat + nuaCanh, lon + nuaCanh].join(",");
+  const kt = doRong || 400;
+  return WORLDVIEW_SNAPSHOT_GOC + "?REQUEST=GetSnapshot&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor" +
+    "&CRS=EPSG:4326&TIME=" + ngayISO + "&WRAP=DAY&BBOX=" + bbox + "&FORMAT=image/jpeg&WIDTH=" + kt + "&HEIGHT=" + kt;
+}
+// Dùng khi chưa có ngày NDVI cụ thể (ví dụ nơi mồi nhử trong đố vui) --
+// lùi 3 ngày vì ảnh mới nhất thường cần 1-2 ngày để NASA xử lý xong.
+function ngayAnhVeTinhMacDinh() {
+  const d = new Date();
+  d.setDate(d.getDate() - 3);
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+// Hiện khung hình EIC trong màn Lắng nghe, đúng ngày với dữ liệu NDVI đang dùng.
+function hienThiKhungHinhEIC(kv, d) {
+  const anh = document.getElementById("eic-anh-nghe");
+  const trangThai = document.getElementById("eic-trangthai-nghe");
+  const nhan = document.getElementById("eic-nhan-nghe");
+  const ngaySpan = document.getElementById("eic-ngay-nghe");
+  const ngay = (d && d.ndviNgay) || ngayAnhVeTinhMacDinh();
+  anh.style.display = "none";
+  nhan.style.display = "none";
+  trangThai.style.display = "block";
+  trangThai.textContent = T("eic_dangtai");
+  anh.onload = function () {
+    trangThai.style.display = "none";
+    anh.style.display = "block";
+    nhan.style.display = "block";
+    ngaySpan.textContent = " · " + ngay;
+  };
+  anh.onerror = function () {
+    trangThai.style.display = "block";
+    trangThai.textContent = T("eic_loi");
+  };
+  anh.src = urlAnhVeTinh(kv.lat, kv.lon, ngay);
+}
+
+// ---------- LẤY DỮ LIỆU THẬT TỪ NASA ----------
+
+// NASA MODIS Vegetation Indices (NDVI), qua NASA ORNL DAAC — miễn phí, không cần key.
+const MODIS_GOC = "https://modis.ornl.gov/rst/api/v1/MOD13Q1";
+async function layNgayNDVICoSan(lat, lon) {
+  const res = await fetch(MODIS_GOC + "/dates?latitude=" + lat + "&longitude=" + lon, { headers: { Accept: "application/json" } });
+  const data = await res.json();
+  return data.dates.map(function (d) { return d.modis_date; });
+}
+async function layNDVIMotNgay(lat, lon, ngayModis) {
+  const url = MODIS_GOC + "/subset?latitude=" + lat + "&longitude=" + lon +
+    "&startDate=" + ngayModis + "&endDate=" + ngayModis + "&kmAboveBelow=0&kmLeftRight=0";
+  const res = await fetch(url, { headers: { Accept: "application/json" } });
+  const raw = await res.json();
+  let ndviRaw = null, doTinCay = null, ngay = null;
+  raw.subset.forEach(function (row) {
+    if (row.band === "250m_16_days_NDVI") { ndviRaw = row.data[0]; ngay = row.calendar_date; }
+    if (row.band === "250m_16_days_pixel_reliability") doTinCay = row.data[0];
+  });
+  return {
+    ndvi: ndviRaw === null ? null : ndviRaw * 0.0001,
+    ngay: ngay,
+    dangTinCay: doTinCay === 0 || doTinCay === 1 // 0=tốt, 1=tạm ổn, 2=tuyết, 3=mây che
+  };
+}
+// Ảnh vệ tinh có thể bị mây che, nên ta thử vài đợt đo gần nhất CÙNG LÚC
+// rồi chọn đợt gần nhất mà trời quang (đáng tin cậy). Nhân tiện lấy luôn
+// đợt đo tin cậy NGAY TRƯỚC ĐÓ (ndviTruoc) để biết xu hướng tăng/giảm --
+// KHÔNG cần gọi thêm API nào, vì 8 đợt đo đã được tải sẵn cùng lúc ở trên.
+async function layNDVIGanNhatDangTin(lat, lon) {
+  const ngays = (await layNgayNDVICoSan(lat, lon)).slice(-8).reverse();
+  const ketQua = await Promise.all(ngays.map(function (ngay) { return layNDVIMotNgay(lat, lon, ngay); }));
+  const tinCay = ketQua.filter(function (kq) { return kq.dangTinCay; });
+  const hienTai = tinCay[0] || ketQua[0];
+  const truoc = tinCay[1] || null;
+  return {
+    ndvi: hienTai.ndvi, ngay: hienTai.ngay, dangTinCay: hienTai.dangTinCay,
+    ndviTruoc: truoc ? truoc.ndvi : null
+  };
+}
+
+// NASA POWER (nhiệt độ T2M + lượng mưa PRECTOTCORR), trung bình năm gần
+// nhất. Lấy CẢ năm trước (start=nam-1) trong CÙNG 1 lần gọi (POWER trả về
+// nhiều năm trong 1 request) để biết xu hướng so với năm ngoái -- không
+// tốn thêm request nào.
+async function layNhietDoVaMua(lat, lon, nam) {
+  const url = "https://power.larc.nasa.gov/api/temporal/monthly/point" +
+    "?parameters=T2M,PRECTOTCORR&community=AG&longitude=" + lon + "&latitude=" + lat +
+    "&start=" + (nam - 1) + "&end=" + nam + "&format=JSON";
+  const res = await fetch(url);
+  const data = await res.json();
+  const khoaNam = nam + "13"; // "13" = giá trị trung bình cả năm
+  const khoaNamTruoc = (nam - 1) + "13";
+  return {
+    tempC: data.properties.parameter.T2M[khoaNam],
+    rainMmNgay: data.properties.parameter.PRECTOTCORR[khoaNam],
+    tempCNamTruoc: data.properties.parameter.T2M[khoaNamTruoc],
+    rainMmNgayNamTruoc: data.properties.parameter.PRECTOTCORR[khoaNamTruoc],
+    nam: nam
+  };
+}
+
+// NASA POWER cũng có dữ liệu THEO NGÀY (nguồn GEOSIT, gần với thời gian
+// thực nhất mà NASA cung cấp miễn phí) -- nhưng vẫn có độ trễ khoảng
+// 3-4 ngày, KHÔNG phải số liệu tức thời từng phút/giờ. Ta lấy 14 ngày gần
+// nhất rồi tìm ngày MỚI NHẤT đã có số liệu (không phải "-999" = chưa xử lý xong).
+async function layThoiTietGanNhat(lat, lon) {
+  const homNay = new Date();
+  const ngayBatDau = new Date(homNay);
+  ngayBatDau.setDate(homNay.getDate() - 14);
+  function dinhDangNgay(d) {
+    return d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0");
+  }
+  const url = "https://power.larc.nasa.gov/api/temporal/daily/point" +
+    "?parameters=T2M,PRECTOTCORR&community=AG&longitude=" + lon + "&latitude=" + lat +
+    "&start=" + dinhDangNgay(ngayBatDau) + "&end=" + dinhDangNgay(homNay) + "&format=JSON";
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Không lấy được thời tiết gần nhất");
+  const data = await res.json();
+  const tempTheoNgay = data.properties.parameter.T2M;
+  const muaTheoNgay = data.properties.parameter.PRECTOTCORR;
+  const cacNgay = Object.keys(tempTheoNgay).sort();
+  for (let i = cacNgay.length - 1; i >= 0; i--) {
+    const ngay = cacNgay[i];
+    if (tempTheoNgay[ngay] !== -999 && muaTheoNgay[ngay] !== -999) {
+      return {
+        ngay: ngay.slice(0, 4) + "-" + ngay.slice(4, 6) + "-" + ngay.slice(6, 8),
+        tempC: tempTheoNgay[ngay],
+        rainMm: muaTheoNgay[ngay]
+      };
+    }
+  }
+  return null; // NASA chưa xử lý xong ngày nào trong 14 ngày gần đây
+}
+
+async function layDuLieuKhuVuc(kv) {
+  const [ndviKQ, ttKQ, thoiTietGanNhat] = await Promise.all([
+    layNDVIGanNhatDangTin(kv.lat, kv.lon),
+    layNhietDoVaMua(kv.lat, kv.lon, 2025),
+    layThoiTietGanNhat(kv.lat, kv.lon).catch(function () { return null; })
+  ]);
+  return {
+    ndvi: ndviKQ.ndvi, ndviNgay: ndviKQ.ngay, ndviDangTinCay: ndviKQ.dangTinCay,
+    ndviTruoc: ndviKQ.ndviTruoc,
+    tempC: ttKQ.tempC, rainMmNgay: ttKQ.rainMmNgay, nam: ttKQ.nam,
+    tempCNamTruoc: ttKQ.tempCNamTruoc, rainMmNgayNamTruoc: ttKQ.rainMmNgayNamTruoc,
+    thoiTietGanNhat: thoiTietGanNhat
+  };
+}
+
+// ---------- VẼ CẢNH QUAN (dùng chung cho dự đoán và dữ liệu thật) ----------
+function mauNenDat(ndvi) {
+  const dat = { r: 150, g: 120, b: 90 }; // đất trống
+  const xanh = { r: 32, g: 140, b: 64 }; // rậm rạp
+  const t = Math.min(1, Math.max(0, ndvi));
+  return "rgb(" + Math.round(dat.r + (xanh.r - dat.r) * t) + "," +
+    Math.round(dat.g + (xanh.g - dat.g) * t) + "," +
+    Math.round(dat.b + (xanh.b - dat.b) * t) + ")";
+}
+// Vẽ 1 đám mây (3 hình tròn chụm lại) tại vị trí (x,y).
+function veDamMay(ctx, x, y, mauMay, co) {
+  ctx.fillStyle = mauMay;
+  [[0, 0, 1], [14 * co, -4 * co, 0.85], [27 * co, 1, 0.8]].forEach(function (m) {
+    ctx.beginPath();
+    ctx.arc(x + m[0], y + m[1], 10 * co * m[2], 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+function veCanhQuan(canvas, ndvi, tempC, rainMmNgay, hatGiongSo) {
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  let seed = hatGiongSo || 1;
+  function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+
+  const tNhiet = Math.min(1, Math.max(0, (tempC + 10) / 50)); // 0 = lạnh, 1 = nóng
+  const tMua = Math.min(1, Math.max(0, rainMmNgay / 6)); // 0 = khô, 1 = mưa nhiều
+  const duongDat = h * 0.55;
+
+  // Bầu trời: lạnh -> xanh đậm, nóng -> cam ấm
+  const troiLanh = { r: 22, g: 35, b: 74 };
+  const troiNong = { r: 163, g: 68, b: 28 };
+  ctx.fillStyle = "rgb(" +
+    Math.round(troiLanh.r + (troiNong.r - troiLanh.r) * tNhiet) + "," +
+    Math.round(troiLanh.g + (troiNong.g - troiLanh.g) * tNhiet) + "," +
+    Math.round(troiLanh.b + (troiNong.b - troiLanh.b) * tNhiet) + ")";
+  ctx.fillRect(0, 0, w, duongDat);
+
+  // Mây theo NHIỆT ĐỘ: lạnh -> nhiều mây xám xịt, nóng -> ít mây trắng bồng bềnh
+  const soMayNhiet = tNhiet < 0.35 ? 3 : tNhiet < 0.7 ? 2 : 1;
+  const mauMayNhiet = tNhiet < 0.35 ? "rgba(180,188,205,0.8)" : "rgba(255,255,255,0.85)";
+  for (let i = 0; i < soMayNhiet; i++) {
+    veDamMay(ctx, rand() * w * 0.7 + w * 0.1, rand() * duongDat * 0.45 + 10, mauMayNhiet, 0.9);
+  }
+
+  // Mặt trời: to hơn khi nóng hơn (mưa nhiều thì mặt trời mờ đi, như trời âm u)
+  ctx.globalAlpha = 1 - tMua * 0.6;
+  ctx.beginPath();
+  ctx.arc(w - 36, 28, 9 + tNhiet * 11, 0, Math.PI * 2);
+  ctx.fillStyle = "#ffe066";
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  // Mây mưa: xuất hiện khi có mưa, càng nhiều mưa càng to & xám đậm
+  if (tMua > 0.05) {
+    veDamMay(ctx, w * 0.35, duongDat * 0.3, "rgba(90,100,120,0.85)", 1 + tMua * 0.6);
+    if (tMua > 0.5) veDamMay(ctx, w * 0.65, duongDat * 0.22, "rgba(90,100,120,0.85)", 0.9 + tMua * 0.5);
+  }
+
+  // Đất + cây (theo NDVI)
+  ctx.fillStyle = mauNenDat(ndvi);
+  ctx.fillRect(0, duongDat, w, h - duongDat);
+
+  const soCay = Math.round(Math.min(1, Math.max(0, ndvi)) * 22);
+  for (let i = 0; i < soCay; i++) {
+    const x = rand() * w, y = duongDat + rand() * (h - duongDat) * 0.85 + 5, r = 3 + rand() * 4;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = "#5fd489"; ctx.fill();
+  }
+
+  // Mưa: giọt rơi (nhiều & rõ hơn khi mưa nhiều) + vệt bắn nước dưới đất khi mưa to
+  const soGiot = Math.round(tMua * 22);
+  ctx.strokeStyle = "rgba(173,216,255,0.9)";
+  ctx.lineWidth = tMua > 0.5 ? 2.5 : 2;
+  const viTriGiot = [];
+  for (let i = 0; i < soGiot; i++) {
+    const x = rand() * w, y = rand() * duongDat * 1.3 + 4;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 4, y + 12); ctx.stroke();
+    if (y + 12 >= duongDat - 6) viTriGiot.push(x - 4);
+  }
+  if (tMua > 0.5) { // mưa to: thêm vài vệt bắn nước ngay trên mặt đất
+    ctx.strokeStyle = "rgba(173,216,255,0.7)";
+    ctx.lineWidth = 1.5;
+    viTriGiot.slice(0, 6).forEach(function (x) {
+      ctx.beginPath(); ctx.arc(x, duongDat - 2, 3, Math.PI, 0); ctx.stroke();
+    });
+  }
+}
+
+function hatGiongTuTen(chuoi) {
+  return chuoi.split("").reduce(function (t, c) { return t + c.charCodeAt(0); }, 1);
+}
+
+// ---------- MÀN: chọn khu vực ----------
+async function chonKhuVuc(id) {
+  khuVucHienTai = id;
+  const kv = timKhuVuc(id);
+
+  if (!duLieuDaTai[id]) {
+    hienManHinh("man-tai");
+    document.getElementById("trang-thai-tai").textContent = T("tai_dangtai_ten") + tenKhuVuc(kv) + " ...";
+    try {
+      duLieuDaTai[id] = await layDuLieuKhuVuc(kv);
+    } catch (loi) {
+      document.getElementById("trang-thai-tai").textContent = T("tai_loi");
+      console.error(loi);
+      return;
+    }
+  }
+
+  moManNghe(id);
+}
+function timKhuVuc(id) { return KHU_VUC.find(function (kv) { return kv.id === id; }); }
+
+// ---------- MÀN 4: Lắng nghe ----------
+function moManNghe(id) {
+  const kv = timKhuVuc(id);
+  document.getElementById("nghe-emoji").textContent = kv.emoji;
+  document.getElementById("nghe-ten").textContent = tenKhuVuc(kv);
+  ["phuxanh", "nhietdo", "mua"].forEach(function (loai) {
+    document.getElementById("trang-thai-" + loai).textContent = "";
+  });
+  document.getElementById("nut-toi-ve").disabled = true;
+  hienThiKhungHinhEIC(kv, duLieuDaTai[id]);
+  hienManHinh("man-nghe");
+}
+function chuXuHuong(huong) {
+  if (huong > 0) return T("nghe_xuhuong_tang");
+  if (huong < 0) return T("nghe_xuhuong_giam");
+  return "";
+}
+function xuLyNghe(loai) {
+  const d = duLieuDaTai[khuVucHienTai];
+  if (loai === "phuxanh") {
+    const mucDo = phanLoaiPhuXanh(d.ndvi);
+    phatAmPhuXanh(mucDo, d.ndvi, d.ndviTruoc);
+    document.getElementById("trang-thai-phuxanh").textContent = T("nghe_muc") + nhanMucDo(mucDo) +
+      chuXuHuong(huongThayDoi(d.ndvi, d.ndviTruoc, NGUONG_XU_HUONG.phuxanh));
+  } else if (loai === "nhietdo") {
+    const mucDo = phanLoaiNhietDo(d.tempC);
+    phatAmNhietDo(mucDo, d.tempC, d.tempCNamTruoc);
+    document.getElementById("trang-thai-nhietdo").textContent = T("nghe_muc") + nhanMucDo(mucDo) +
+      chuXuHuong(huongThayDoi(d.tempC, d.tempCNamTruoc, NGUONG_XU_HUONG.nhietdo));
+  } else {
+    const mucDo = phanLoaiMua(d.rainMmNgay);
+    phatAmMua(mucDo, d.rainMmNgay, d.rainMmNgayNamTruoc);
+    document.getElementById("trang-thai-mua").textContent = T("nghe_muc") + nhanMucDo(mucDo) +
+      chuXuHuong(huongThayDoi(d.rainMmNgay, d.rainMmNgayNamTruoc, NGUONG_XU_HUONG.mua));
+  }
+  document.getElementById("nut-toi-ve").disabled = false;
+}
+
+// ---------- MÀN 5: Vẽ tranh dự đoán ----------
+// Thay vì kéo thanh trượt (khó hình dung con số nghĩa là gì), người chơi
+// bấm chọn 1 trong 3 thẻ rõ ràng cho mỗi loại dữ liệu.
+// "phu" là số liệu minh họa (không phải số đo chính xác -- NDVI không
+// đếm số cây thật) để em dễ hình dung hơn là chỉ nhìn nhãn chữ suông.
+const LUA_CHON = {
+  phuxanh: [
+    { ma: "thap", nhan: "Rất ít cây", nhanEn: "Very few trees", phu: "~1 cây/100m²", phuEn: "~1 tree/100m²", emoji: "🏜️", giaTri: 0.15 },
+    { ma: "vua", nhan: "Vừa phải", nhanEn: "Moderate", phu: "~1 cây/20m²", phuEn: "~1 tree/20m²", emoji: "🌿", giaTri: 0.45 },
+    { ma: "cao", nhan: "Rậm rạp", nhanEn: "Dense", phu: "~1 cây/4m²", phuEn: "~1 tree/4m²", emoji: "🌳", giaTri: 0.85 }
+  ],
+  nhietdo: [
+    { ma: "thap", nhan: "Mát/lạnh", nhanEn: "Cool/cold", phu: "~8°C", phuEn: "~8°C", emoji: "🥶", giaTri: 8 },
+    { ma: "vua", nhan: "Ôn hòa", nhanEn: "Mild", phu: "~20°C", phuEn: "~20°C", emoji: "😊", giaTri: 20 },
+    { ma: "cao", nhan: "Nóng", nhanEn: "Hot", phu: "~32°C", phuEn: "~32°C", emoji: "🥵", giaTri: 32 }
+  ],
+  mua: [
+    { ma: "thap", nhan: "Khô hạn", nhanEn: "Dry", phu: "~0.3 mm/ngày", phuEn: "~0.3 mm/day", emoji: "🏜️", giaTri: 0.3 },
+    { ma: "vua", nhan: "Vừa phải", nhanEn: "Moderate", phu: "~2.5 mm/ngày", phuEn: "~2.5 mm/day", emoji: "🌦️", giaTri: 2.5 },
+    { ma: "cao", nhan: "Mưa nhiều", nhanEn: "Rainy", phu: "~6 mm/ngày", phuEn: "~6 mm/day", emoji: "🌧️", giaTri: 6 }
+  ]
+};
+let luaChonHienTai = { phuxanh: "vua", nhietdo: "vua", mua: "vua" };
+
+function veNhomLuaChon(loai) {
+  const box = document.getElementById("chon-" + loai);
+  box.innerHTML = "";
+  LUA_CHON[loai].forEach(function (o) {
+    const el = document.createElement("div");
+    el.className = "chon-o" + (luaChonHienTai[loai] === o.ma ? " active" : "");
+    const nhan = ngonNguHienTai === "en" ? o.nhanEn : o.nhan;
+    const phu = ngonNguHienTai === "en" ? o.phuEn : o.phu;
+    el.innerHTML = "<span class='emoji'>" + o.emoji + "</span><span class='nhan'>" + nhan +
+      "</span><span class='phu'>" + phu + "</span>";
+    el.onclick = function () { chonMucDo(loai, o.ma); };
+    box.appendChild(el);
+  });
+}
+function chonMucDo(loai, ma) {
+  luaChonHienTai[loai] = ma;
+  veNhomLuaChon(loai);
+  capNhatVe();
+}
+function timGiaTriLuaChon(loai, ma) {
+  return LUA_CHON[loai].find(function (o) { return o.ma === ma; }).giaTri;
+}
+
+function moManVe() {
+  luaChonHienTai = { phuxanh: "vua", nhietdo: "vua", mua: "vua" };
+  ["phuxanh", "nhietdo", "mua"].forEach(veNhomLuaChon);
+  capNhatVe(); // vẽ preview ngay, không đợi người chơi bấm chọn
+  hienManHinh("man-ve");
+}
+function capNhatVe() {
+  const ndvi = timGiaTriLuaChon("phuxanh", luaChonHienTai.phuxanh);
+  const tempC = timGiaTriLuaChon("nhietdo", luaChonHienTai.nhietdo);
+  const rainMmNgay = timGiaTriLuaChon("mua", luaChonHienTai.mua);
+  duDoanHienTai = { ndvi: ndvi, tempC: tempC, rainMmNgay: rainMmNgay };
+  veCanhQuan(document.getElementById("canvas-ve"), ndvi, tempC, rainMmNgay, hatGiongTuTen(khuVucHienTai));
+}
+function ngheLaiTatCa() {
+  const d = duLieuDaTai[khuVucHienTai];
+  phatAmPhuXanh(phanLoaiPhuXanh(d.ndvi), d.ndvi, d.ndviTruoc);
+  setTimeout(function () { phatAmNhietDo(phanLoaiNhietDo(d.tempC), d.tempC, d.tempCNamTruoc); }, 500);
+  setTimeout(function () { phatAmMua(phanLoaiMua(d.rainMmNgay), d.rainMmNgay, d.rainMmNgayNamTruoc); }, 1400);
+}
+
+// ---------- MÀN: Đố vui "Nghe âm, đoán hình" ----------
+// Ghép ĐÚNG NGHĨA ĐEN sonification (âm thanh) với 1 khung hình vệ tinh
+// thật của NASA: cả 4 lựa chọn dùng CÙNG 1 NGÀY, chỉ khác vị trí -- để em
+// so sánh công bằng "cùng thời điểm, khác nơi, hình trông khác nhau".
+let doanHinhHienTai = null; // { dungId, ngay, daChon }
+function moManDoanHinh() {
+  const kv = timKhuVuc(khuVucHienTai);
+  const d = duLieuDaTai[khuVucHienTai];
+  if (!kv || !d) { hienManHinh("man-nghe"); return; }
+
+  const ngay = d.ndviNgay || ngayAnhVeTinhMacDinh();
+  const khac = KHU_VUC.filter(function (x) { return x.id !== kv.id; });
+  for (let i = khac.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tam = khac[i]; khac[i] = khac[j]; khac[j] = tam;
+  }
+  const boLuaChon = [kv].concat(khac.slice(0, 3));
+  for (let i = boLuaChon.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tam = boLuaChon[i]; boLuaChon[i] = boLuaChon[j]; boLuaChon[j] = tam;
+  }
+
+  doanHinhHienTai = { dungId: kv.id, ngay: ngay, daChon: false };
+  const CHU_CAI = ["A", "B", "C", "D"];
+  const hop = document.getElementById("doanhinh-luachon");
+  hop.innerHTML = "";
+  boLuaChon.forEach(function (diaDiem, idx) {
+    const o = document.createElement("div");
+    o.className = "doanhinh-o";
+    o.dataset.id = diaDiem.id;
+    o.innerHTML = "<span class='nhan-abcd'>" + CHU_CAI[idx] + "</span>" +
+      "<img src='" + urlAnhVeTinh(diaDiem.lat, diaDiem.lon, ngay) + "' alt=''>" +
+      "<div class='ten-hien'>" + diaDiem.emoji + " " + tenKhuVuc(diaDiem) + "</div>";
+    o.onclick = function () { chonDoanHinh(diaDiem.id); };
+    hop.appendChild(o);
+  });
+  document.getElementById("doanhinh-ketqua").style.display = "none";
+  hienManHinh("man-doanhinh");
+}
+function chonDoanHinh(idChon) {
+  if (!doanHinhHienTai || doanHinhHienTai.daChon) return;
+  doanHinhHienTai.daChon = true;
+  const dung = idChon === doanHinhHienTai.dungId;
+  document.querySelectorAll("#doanhinh-luachon .doanhinh-o").forEach(function (el) {
+    el.classList.add("hien-ten");
+    if (el.dataset.id === doanHinhHienTai.dungId) el.classList.add("dung");
+    else if (el.dataset.id === idChon) el.classList.add("sai");
+  });
+  const hopKetQua = document.getElementById("doanhinh-ketqua");
+  hopKetQua.style.display = "block";
+  hopKetQua.textContent = dung ? T("doanhinh_dung") : T("doanhinh_sai", { ten: tenKhuVuc(timKhuVuc(doanHinhHienTai.dungId)) });
+  if (dung) congDiem(1);
+}
+
+// ---------- MÀN 6: So sánh với NASA ----------
+function xuLyChotDuDoan() {
+  const d = duLieuDaTai[khuVucHienTai];
+  const seed = hatGiongTuTen(khuVucHienTai);
+
+  veCanhQuan(document.getElementById("canvas-dudoan"), duDoanHienTai.ndvi, duDoanHienTai.tempC, duDoanHienTai.rainMmNgay, seed);
+  veCanhQuan(document.getElementById("canvas-thuc-te"), d.ndvi, d.tempC, d.rainMmNgay, seed);
+
+  const mucNdviDuDoan = phanLoaiPhuXanh(duDoanHienTai.ndvi), mucNdviThucTe = phanLoaiPhuXanh(d.ndvi);
+  const mucTempDuDoan = phanLoaiNhietDo(duDoanHienTai.tempC), mucTempThucTe = phanLoaiNhietDo(d.tempC);
+  const mucMuaDuDoan = phanLoaiMua(duDoanHienTai.rainMmNgay), mucMuaThucTe = phanLoaiMua(d.rainMmNgay);
+
+  const bang = document.getElementById("bang-so-sanh");
+  bang.innerHTML =
+    dongSoSanh(T("sosanh_nhan_phuxanh"), duDoanHienTai.ndvi.toFixed(2), mucNdviDuDoan, d.ndvi.toFixed(2), mucNdviThucTe) +
+    dongSoSanh(T("sosanh_nhan_nhietdo"), duDoanHienTai.tempC.toFixed(0) + "°C", mucTempDuDoan, d.tempC.toFixed(1) + "°C", mucTempThucTe) +
+    dongSoSanh(T("sosanh_nhan_mua"), duDoanHienTai.rainMmNgay.toFixed(1), mucMuaDuDoan, d.rainMmNgay.toFixed(1), mucMuaThucTe) +
+    "<div class='dong'><span>" + T("sosanh_ngaydo") + "</span><span>" + d.ndviNgay + "</span></div>" +
+    "<div class='dong'><span>" + T("sosanh_chatluong") + "</span><span>" + (d.ndviDangTinCay ? T("sosanh_troiquang") : T("sosanh_mayche")) + "</span></div>";
+
+  const lechNdvi = Math.abs(duDoanHienTai.ndvi - d.ndvi);
+  const nx = document.getElementById("nhan-xet");
+  if (lechNdvi < 0.1) {
+    nx.textContent = T("sosanh_nx_gan");
+  } else if (lechNdvi < 0.25) {
+    nx.textContent = T("sosanh_nx_kha");
+  } else {
+    nx.textContent = T("sosanh_nx_xa");
+  }
+
+  // Chấm điểm thưởng: +1 sao cho mỗi chỉ số đoán ĐÚNG MỨC (thấp/vừa/cao).
+  let soSaoLuotNay = 0;
+  if (mucNdviDuDoan === mucNdviThucTe) soSaoLuotNay++;
+  if (mucTempDuDoan === mucTempThucTe) soSaoLuotNay++;
+  if (mucMuaDuDoan === mucMuaThucTe) soSaoLuotNay++;
+  congDiem(soSaoLuotNay);
+  document.getElementById("diem-thuong").innerHTML =
+    "<div class='diem-lon'>" + "⭐".repeat(soSaoLuotNay) + (soSaoLuotNay === 0 ? T("sosanh_diem_chua") : "") + "</div>" +
+    T("sosanh_diem_luot", { n: soSaoLuotNay }) + "<br>" + T("sosanh_diem_tong", { n: diemTichLuy });
+
+  // Thời tiết gần đây nhất NASA có (dữ liệu theo ngày, không phải trung
+  // bình năm) -- đây là số liệu GẦN với hiện tại nhất, nhưng NASA vẫn cần
+  // vài ngày để xử lý nên không phải "ngay lúc này".
+  const oThoiTiet = document.getElementById("thoitiet-gannhat");
+  if (d.thoiTietGanNhat) {
+    oThoiTiet.style.display = "";
+    oThoiTiet.innerHTML =
+      "<h4>" + T("thoitiet_tieude") + "</h4>" +
+      T("thoitiet_ngay", { ngay: d.thoiTietGanNhat.ngay, temp: d.thoiTietGanNhat.tempC.toFixed(1), mua: Math.max(0, d.thoiTietGanNhat.rainMm).toFixed(1) }) +
+      "<br><span style='font-size:11px;color:#6d7d99;'>" + T("thoitiet_ghichu") + "</span>";
+  } else {
+    oThoiTiet.style.display = "none";
+  }
+
+  hienManHinh("man-sosanh");
+}
+function dongSoSanh(nhan, duDoan, mucDoDuDoan, thucTe, mucDoThucTe) {
+  return "<div class='dong'><span>" + nhan + "</span><span>" +
+    T("sosanh_em_nasa", { a: duDoan, amuc: nhanMucDo(mucDoDuDoan), b: thucTe, bmuc: nhanMucDo(mucDoThucTe) }) +
+    "</span></div>";
+}
+
+// ---------- MÀN: Học Hỏi ----------
+// Kiến thức chung (giống nhau cho mọi khu vực) + tóm tắt riêng của khu vực
+// đang chọn, dựng từ đúng dữ liệu NASA vừa tải và bộ phân loại đã dùng để
+// tạo âm thanh -- để "học" và "nghe" luôn khớp với nhau.
+const GIAI_THICH_PHUXANH = {
+  thap: "khá trống trải, ít cây cối che phủ.",
+  vua: "có một lượng cây xanh vừa phải.",
+  cao: "rất rậm rạp, nhiều cây cối xanh tốt."
+};
+const GIAI_THICH_NHIETDO = {
+  thap: "khí hậu khá mát hoặc lạnh trong năm.",
+  vua: "khí hậu ôn hòa, dễ chịu quanh năm.",
+  cao: "khí hậu khá nóng trong năm."
+};
+const GIAI_THICH_MUA = {
+  thap: "rất ít mưa, khá khô hạn.",
+  vua: "lượng mưa ở mức vừa phải.",
+  cao: "mưa rất nhiều trong năm."
+};
+// Bản tiếng Anh, chỉ dùng qua các hàm giaiThich*() bên dưới.
+const GIAI_THICH_PHUXANH_EN = {
+  thap: "fairly bare, with little vegetation cover.",
+  vua: "a moderate amount of greenery.",
+  cao: "very dense, with lots of healthy vegetation."
+};
+const GIAI_THICH_NHIETDO_EN = {
+  thap: "a fairly cool or cold climate all year.",
+  vua: "a mild, pleasant climate all year.",
+  cao: "a fairly hot climate all year."
+};
+const GIAI_THICH_MUA_EN = {
+  thap: "very little rain -- fairly dry.",
+  vua: "a moderate amount of rain.",
+  cao: "a lot of rain throughout the year."
+};
+function giaiThichPhuXanh(ma) { return ngonNguHienTai === "en" ? GIAI_THICH_PHUXANH_EN[ma] : GIAI_THICH_PHUXANH[ma]; }
+function giaiThichNhietDo(ma) { return ngonNguHienTai === "en" ? GIAI_THICH_NHIETDO_EN[ma] : GIAI_THICH_NHIETDO[ma]; }
+function giaiThichMua(ma) { return ngonNguHienTai === "en" ? GIAI_THICH_MUA_EN[ma] : GIAI_THICH_MUA[ma]; }
+function moManHocHoi() {
+  const kv = timKhuVuc(khuVucHienTai);
+  const d = duLieuDaTai[khuVucHienTai];
+  const mucNdvi = phanLoaiPhuXanh(d.ndvi);
+  const mucTemp = phanLoaiNhietDo(d.tempC);
+  const mucMua = phanLoaiMua(d.rainMmNgay);
+
+  document.getElementById("noi-dung-hochoi").innerHTML =
+    "<div class='khuvuc-header'><div class='emoji'>" + kv.emoji + "</div><div class='ten'>" + tenKhuVuc(kv) + "</div></div>" +
+    "<div class='hochoi-card'><h4>" + T("hochoi_ndvi_tieude") + "</h4>" + T("hochoi_ndvi_giaithich") + "</div>" +
+    "<div class='hochoi-card'><h4>" + T("hochoi_dulieu_tieude", { ten: tenKhuVuc(kv) }) + "</h4>" +
+    T("hochoi_dong_phuxanh", { gt: d.ndvi.toFixed(2), muc: nhanMucDo(mucNdvi), giaithich: giaiThichPhuXanh(mucNdvi) }) + "<br><br>" +
+    T("hochoi_dong_nhietdo", { gt: d.tempC.toFixed(1), muc: nhanMucDo(mucTemp), giaithich: giaiThichNhietDo(mucTemp) }) + "<br><br>" +
+    T("hochoi_dong_mua", { gt: d.rainMmNgay.toFixed(1), muc: nhanMucDo(mucMua), giaithich: giaiThichMua(mucMua) }) +
+    "</div>" +
+    "<div class='hochoi-card'><h4>" + T("hochoi_nguon_tieude") + "</h4>" +
+    T("hochoi_nguon_phuxanh", { ngay: d.ndviNgay }) + "<br><br>" +
+    T("hochoi_nguon_thoitiet", { nam: d.nam }) + "</div>";
+
+  hienManHinh("man-hochoi");
+}
+
+// ---------- MÀN 7: Green Corner của em ----------
+function luuGocXanh() {
+  const noiDung = document.getElementById("ghi-chu-goc-xanh").value;
+  try { localStorage.setItem("greenCorner_ghiChu", noiDung); } catch (e) { /* bỏ qua nếu trình duyệt chặn */ }
+  document.getElementById("da-luu-thongbao").textContent = T("gocxanh_daluu");
+}
+(function khoiPhucGocXanh() {
+  try {
+    const daLuu = localStorage.getItem("greenCorner_ghiChu");
+    if (daLuu) document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("ghi-chu-goc-xanh").value = daLuu;
+    });
+  } catch (e) { /* bỏ qua */ }
+})();
+
+// ---------- Đội Tuần Tra Xanh: game hóa xếp hạng theo quốc gia ----------
+function veDanhSachQuocGia() {
+  const box = document.getElementById("danh-sach-quocgia");
+  box.innerHTML = "";
+  NHIEM_VU_QUOCGIA.forEach(function (qg) {
+    const ten = tenQuocGia(qg);
+    const el = document.createElement("div");
+    el.className = "tile t-green";
+    el.innerHTML =
+      "<div class='emoji'>" + ten.split(" ")[0] + "</div>" +
+      "<div class='label'>" + ten.slice(ten.indexOf(" ") + 1) + "</div>" +
+      "<div class='sub'>" + T("tuantra_diem_ungvien", { n: qg.diaDiemIds.length }) + "</div>";
+    el.onclick = function () { chonQuocGiaTuanTra(qg.id); };
+    box.appendChild(el);
+  });
+}
+
+async function chonQuocGiaTuanTra(quocGiaId) {
+  const qg = NHIEM_VU_QUOCGIA.find(function (q) { return q.id === quocGiaId; });
+  hienManHinh("man-tai");
+  document.getElementById("trang-thai-tai").textContent = T("tuantra_dangtai", { ten: tenQuocGia(qg) });
+
+  // Nếu điểm đã từng khám phá ở Mission 1 thì dùng lại dữ liệu đã có (đỡ
+  // gọi NASA lần nữa); điểm nào chưa có thì chỉ lấy riêng NDVI (nhanh hơn
+  // gọi đủ cả 3 nguồn dữ liệu vì Đội Tuần Tra Xanh chỉ cần NDVI để xếp hạng).
+  const diemDuLieu = await Promise.all(qg.diaDiemIds.map(async function (id) {
+    const kv = timKhuVuc(id);
+    if (duLieuDaTai[id]) {
+      return { id: id, kv: kv, ndvi: duLieuDaTai[id].ndvi, ngay: duLieuDaTai[id].ndviNgay, dangTinCay: duLieuDaTai[id].ndviDangTinCay };
+    }
+    const kq = await layNDVIGanNhatDangTin(kv.lat, kv.lon);
+    return { id: id, kv: kv, ndvi: kq.ndvi, ngay: kq.ngay, dangTinCay: kq.dangTinCay };
+  }));
+
+  tuanTraHienTai = { quocGia: qg, diemDuLieu: diemDuLieu, thuTuDaChon: [] };
+  renderManTuanTraDoan();
+  hienManHinh("man-tuantra-doan");
+}
+
+function renderManTuanTraDoan() {
+  document.getElementById("tuantra-doan-tieude").textContent = "🚨 " + tenQuocGia(tuanTraHienTai.quocGia);
+  const box = document.getElementById("danh-sach-tuantra-doan");
+  box.innerHTML = "";
+  tuanTraHienTai.diemDuLieu.forEach(function (d) {
+    const el = document.createElement("div");
+    el.className = "tile " + d.kv.mau;
+    el.id = "tuantra-o-" + d.id;
+    el.innerHTML = "<div class='emoji'>" + d.kv.emoji + "</div><div class='label'>" + tenKhuVuc(d.kv) + "</div>";
+    el.onclick = function () { chonThuTuTuanTra(d.id); };
+    box.appendChild(el);
+  });
+  document.getElementById("nut-xem-ketqua-tuantra").disabled = true;
+  capNhatTienDoTuanTra();
+}
+
+// Nút "Xem kết quả" chỉ bật khi đã xếp hạng ĐỦ tất cả các ô -- nhưng nếu
+// chỉ nhìn nút bị mờ đi, người chơi dễ tưởng nhầm là nút bị lỗi/không bấm
+// được. Dòng chữ này giải thích rõ còn thiếu bao nhiêu ô, để không ai
+// phải đoán vì sao nút chưa hoạt động.
+function capNhatTienDoTuanTra() {
+  const da = tuanTraHienTai.thuTuDaChon.length;
+  const tong = tuanTraHienTai.diemDuLieu.length;
+  const el = document.getElementById("tuantra-tien-do");
+  el.textContent = da === tong ? T("tuantra_tiendo_xong", { tong: tong }) : T("tuantra_tiendo", { da: da, tong: tong });
+}
+
+// Người chơi bấm LẦN LƯỢT từng ô để xếp hạng -- đơn giản và ít rủi ro lỗi
+// hơn nhiều so với kéo-thả (kéo-thả cần xử lý cảm ứng riêng cho di động,
+// rất dễ phát sinh bug). Bấm lại ô đã chọn sẽ không có tác dụng; muốn sửa
+// thì bấm "Chọn lại thứ tự" để làm lại từ đầu -- đơn giản, không cần xử
+// lý chèn/xóa giữa danh sách.
+function chonThuTuTuanTra(id) {
+  if (tuanTraHienTai.thuTuDaChon.indexOf(id) !== -1) return; // đã chọn rồi, bỏ qua
+  tuanTraHienTai.thuTuDaChon.push(id);
+
+  const thuTu = tuanTraHienTai.thuTuDaChon.indexOf(id) + 1;
+  const el = document.getElementById("tuantra-o-" + id);
+  el.classList.add("da-chon");
+  el.insertAdjacentHTML("afterbegin", "<span class='huy-hieu-thu-tu'>" + thuTu + "</span>");
+
+  const xongHet = tuanTraHienTai.thuTuDaChon.length === tuanTraHienTai.diemDuLieu.length;
+  document.getElementById("nut-xem-ketqua-tuantra").disabled = !xongHet;
+  capNhatTienDoTuanTra();
+}
+function lamLaiThuTuTuanTra() {
+  tuanTraHienTai.thuTuDaChon = [];
+  renderManTuanTraDoan();
+}
+
+function xuLyXemKetQuaTuanTra() {
+  const diemXepHang = tuanTraHienTai.diemDuLieu.slice().sort(function (a, b) { return a.ndvi - b.ndvi; });
+  const idItXanhNhatThat = diemXepHang[0].id;
+  const idNhieuXanhNhatThat = diemXepHang[diemXepHang.length - 1].id;
+  const idItXanhNhatEmChon = tuanTraHienTai.thuTuDaChon[0];
+  const idNhieuXanhNhatEmChon = tuanTraHienTai.thuTuDaChon[tuanTraHienTai.thuTuDaChon.length - 1];
+
+  const ndviLonNhat = diemXepHang[diemXepHang.length - 1].ndvi;
+  document.getElementById("tuantra-bang-xephang").innerHTML =
+    "<p class='chon-nhom-tieude'>" + T("tuantra_xephang_that") + "</p>" +
+    diemXepHang.map(function (d, i) {
+      const phanTramThanh = Math.max(6, Math.round((d.ndvi / ndviLonNhat) * 100));
+      return "<div class='xephang-dong" + (i === 0 ? " can-nhat" : "") + "'>" +
+        "<div class='xephang-nhan'><span>" + (i + 1) + ". " + d.kv.emoji + " " + tenKhuVuc(d.kv) + (i === 0 ? " 🚩" : "") + "</span>" +
+        "<b>" + d.ndvi.toFixed(2) + "</b></div>" +
+        "<div class='xephang-thanh-nen'><div class='xephang-thanh' style='width:" + phanTramThanh + "%'></div></div>" +
+        "</div>";
+    }).join("") +
+    "<p class='chon-nhom-tieude'>" + T("tuantra_xephang_em") + "</p>" +
+    tuanTraHienTai.thuTuDaChon.map(function (id, i) {
+      const d = tuanTraHienTai.diemDuLieu.find(function (x) { return x.id === id; });
+      return "<div class='xephang-nhan'><span>" + (i + 1) + ". " + d.kv.emoji + " " + tenKhuVuc(d.kv) + "</span></div>";
+    }).join("");
+
+  const nx = document.getElementById("tuantra-nhanxet");
+  let soSao = 0;
+  const dungDauBang = idItXanhNhatEmChon === idItXanhNhatThat;
+  const dungCuoiBang = idNhieuXanhNhatEmChon === idNhieuXanhNhatThat;
+  if (dungDauBang) soSao += 2;
+  if (dungCuoiBang) soSao += 1;
+
+  const tenDau = tenKhuVuc(diemXepHang[0].kv);
+  const tenCuoi = tenKhuVuc(diemXepHang[diemXepHang.length - 1].kv);
+  if (dungDauBang && dungCuoiBang) {
+    nx.textContent = T("tuantra_nx_ca2");
+  } else if (dungDauBang) {
+    nx.textContent = T("tuantra_nx_dau", { dau: tenDau, cuoi: tenCuoi });
+  } else if (dungCuoiBang) {
+    nx.textContent = T("tuantra_nx_cuoi", { dau: tenDau, cuoi: tenCuoi });
+  } else {
+    nx.textContent = T("tuantra_nx_khong", { dau: tenDau, cuoi: tenCuoi, ndvi: diemXepHang[0].ndvi.toFixed(2) });
+  }
+
+  congDiem(soSao);
+  document.getElementById("tuantra-diem").innerHTML =
+    "<div class='diem-lon'>" + (soSao > 0 ? "⭐".repeat(soSao) : T("sosanh_diem_chua")) + "</div>" +
+    T("sosanh_diem_tong", { n: diemTichLuy }) + "<br>" +
+    "<span style='font-size:11px;'>" + T("tuantra_diem_hoi", { ten: tenDau }) + "</span>";
+
+  hienManHinh("man-tuantra-ketqua");
+}
+
+// ---------- Khởi động ----------
+apDungNgonNgu(); // áp dụng ngôn ngữ đã lưu (mặc định tiếng Việt), vẽ danh sách khu vực + quốc gia + điểm
+</script>
