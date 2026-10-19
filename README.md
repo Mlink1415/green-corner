@@ -46,7 +46,7 @@ Cụ thể app đã làm:
    tinh, ảnh nào đúng là của nơi này.
    ⏳ **Khám phá theo thời gian (tuỳ chọn)** — kéo thanh thời gian hoặc bấm Phát
    để nghe hơn 20 năm số liệu NASA (NDVI, nhiệt độ, mưa, gió) trôi qua trong
-   1–4 phút, kèm thẻ giải thích song ngữ Việt/Anh và thẻ "📍 Về nơi này" (nơi ở đâu, khí hậu, 20 năm qua phủ xanh/nhiệt độ/mưa đổi ra sao — tính từ số liệu thật — và nghe sẽ khác thế nào). Hiện có cho **Hà Nội, Cần
+   1–4 phút, kèm thẻ giải thích song ngữ Việt/Anh và thẻ "📍 Về nơi này" (có nút 🔊 Nghe đọc bằng giọng đọc có sẵn của trình duyệt, tự ẩn nếu máy không có giọng tiếng Việt/Anh) (nơi ở đâu, khí hậu, 20 năm qua phủ xanh/nhiệt độ/mưa đổi ra sao — tính từ số liệu thật — và nghe sẽ khác thế nào). Hiện có cho **Hà Nội, Cần
    Thơ, Phoenix, New York**; nơi khác sẽ ẩn nút này.
 4. 📚 **Học Hỏi (tuỳ chọn)** — xem tổng hợp kiến thức và số liệu NASA về nơi
    đó nếu muốn tìm hiểu sâu hơn.
@@ -110,6 +110,7 @@ NODE_PATH=<...> node tools/test_amthanh.js                         # âm thanh: 
 NODE_PATH=<...> node tools/test_chedo.js                            # màn chọn cách khám phá, danh sách 4 nơi
 NODE_PATH=<...> node tools/test_quaylai.js                          # nút ⬅ Quay lại ở mọi màn (cần mạng)
 NODE_PATH=<...> node tools/audit_en.js                             # rà chữ tiếng Việt còn sót khi bật tiếng Anh (cần mạng)
+NODE_PATH=<...> node tools/test_doc.js                              # nút Nghe đọc (giọng giả): ẩn/hiện, văn bản đọc, tự dừng
 NODE_PATH=<...> node tools/test_noi.js                              # thẻ "Về nơi này": đối chiếu số với số liệu gốc
 NODE_PATH=<...> node tools/test_loi.js                             # thẻ lời song ngữ
 NODE_PATH=<...> node tools/test_s5.js                              # toàn diện: điện thoại, mạng chậm, bộ nhớ, luồng cũ

@@ -198,6 +198,7 @@
   .tg-tuychinh input[type=range] { width: 100%; accent-color: #2d9c6a; }
   .tg-the { background: #fff; border: 3px solid #95d5b2; border-radius: 14px; padding: 10px 12px; margin: 8px 0;
             font-size: 13px; line-height: 1.6; color: #264653; }
+  .tg-doc-nut { width: auto; font-size: 13px; padding: 6px 14px; margin: 4px 0 8px; }
   .tg-the p { margin: 6px 0; }
   .tg-the ul { margin: 6px 0; padding-left: 18px; }
   .tg-the li { margin: 3px 0; }
@@ -419,6 +420,7 @@
       <div class="tg-ghichu" id="tg-ghichu-nam"></div>
       <details class="tg-tuychinh" id="tg-nhom-gioithieu">
         <summary data-i18n="tg_gt_tieude">📖 Giới thiệu</summary>
+        <button type="button" class="btn-secondary tg-doc-nut" data-doc="gioithieu" style="display:none;" onclick="docTheTG('gioithieu', this)">🔊 Nghe đọc cả phần Giới thiệu</button>
         <div id="tg-loi-gioithieu"></div>
       </details>
       <details class="tg-tuychinh" id="tg-nhom-dulieu">
@@ -669,6 +671,9 @@ const TU_DIEN = {
     tg_dl_tieude: "📊 Ý nghĩa của dữ liệu",
     tg_ln_tieude: "ℹ️ Lưu ý",
     nut_quaylai: "⬅ Quay lại",
+    tg_doc_bat: "🔊 Nghe đọc",
+    tg_doc_bat_gt: "🔊 Nghe đọc cả phần Giới thiệu",
+    tg_doc_dung: "⏹ Dừng đọc",
     mucluc_tieude: "📖 Mục lục âm thanh",
     mucluc_chung: "<b>🎵 Quy tắc chung cho cả 3 loại</b> (dùng thang Đô-Rê-Mi-Fa-Sol-La-Si-Đô, trải rộng hơn 2 quãng 8 để dễ phân biệt)<br>Mức <b>Cao</b> = quãng CAO (Đô5-Rê5-Mi5-Sol5), <b>vui nhộn</b>, đi lên, nhanh<br>Mức <b>Trung bình</b> = quãng GIỮA (Đô4-Rê4-Mi4-Fa4), vừa phải<br>Mức <b>Thấp</b> = quãng TRẦM (La3-Sol3-Fa3), <b>buồn nhẹ</b>, đi xuống, chậm",
     mucluc_xanh: "<b>🌿 Phủ xanh</b> — âm tam giác, trong trẻo như lá cây. Rậm rạp nghe vui tươi, đất trống nghe buồn hơn.",
@@ -878,6 +883,9 @@ const TU_DIEN = {
     tg_dl_tieude: "📊 What the data means",
     tg_ln_tieude: "ℹ️ Good to know",
     nut_quaylai: "⬅ Back",
+    tg_doc_bat: "🔊 Read aloud",
+    tg_doc_bat_gt: "🔊 Read the whole Introduction",
+    tg_doc_dung: "⏹ Stop reading",
     mucluc_tieude: "📖 Sound guide",
     mucluc_chung: "<b>🎵 General rules for all 3 types</b> (uses the scale C-D-E-F-G-A-B-C, spread over more than 2 octaves so the levels are easy to tell apart)<br><b>High</b> level = HIGH range (C5-D5-E5-G5), <b>cheerful</b>, rising, fast<br><b>Medium</b> level = MIDDLE range (C4-D4-E4-F4), moderate<br><b>Low</b> level = LOW range (A3-G3-F3), <b>gently sad</b>, falling, slow",
     mucluc_xanh: "<b>🌿 Vegetation</b> — a triangle wave, clear like leaves. Dense greenery sounds cheerful, bare ground sounds sadder.",
@@ -2235,6 +2243,7 @@ function theNoiTG(c) { // trả về HTML thẻ; lỗi gì cũng trả chuỗi r
     const luuy = T("tn_luuy") + (p.pctNoiSuy > 0.5 ? " " + T("tn_luuy_ndvi") : "");
     const mu = p.mua;
     return "<div class='tg-the' data-clip='NOI'><h4>" + T("tn_tieude") + "</h4>" +
+      "<button type='button' class='btn-secondary tg-doc-nut' data-doc='noi' style='display:none;' onclick=\"docTheTG('noi', this)\">" + T("tg_doc_bat") + "</button>" +
       "<p>" + noi[en ? "en" : "vi"] + " " + T("tn_diem", { lat: toaDo(c.lat, en ? "N" : "B", en ? "S" : "N"), lon: toaDo(c.lon, en ? "E" : "Đ", en ? "W" : "T") }) + "</p>" +
       "<p>" + T("tn_muavu", { a: p.nam0, b: p.nam1, mt1: th(mu.T.thMn), t1: gt.T(mu.T.mn), mt2: th(mu.T.thMx), t2: gt.T(mu.T.mx),
         mp1: th(mu.P.thMn), p1: gt.P(mu.P.mn), mp2: th(mu.P.thMx), p2: gt.P(mu.P.mx) }) + "</p>" +
@@ -2243,8 +2252,104 @@ function theNoiTG(c) { // trả về HTML thẻ; lỗi gì cũng trả chuỗi r
       "<p>" + luuy + "</p></div>";
   } catch (loi) { console.error(loi); return ""; }
 }
+// ---------- Đọc to (tuỳ chọn): giọng đọc có sẵn của trình duyệt (Web Speech API) ----------
+// Chỉ hiện nút khi máy có giọng đúng ngôn ngữ đang bật; không có thì ẩn và app chạy như cũ. Không thêm file nào.
+const DOC = { dang: false, ma: 0, hang: [], vt: 0, nut: null, u: null };
+function docHoTroTG() {
+  return typeof window !== "undefined" && "speechSynthesis" in window && typeof window.SpeechSynthesisUtterance === "function";
+}
+function timGiongDocTG() { // giọng hợp ngôn ngữ hiện tại, hoặc null
+  if (!docHoTroTG()) return null;
+  let ds = [];
+  try { ds = window.speechSynthesis.getVoices() || []; } catch (loi) { return null; }
+  const ma = ngonNguHienTai === "en" ? "en" : "vi";
+  const loc = function (v) { return String(v.lang || "").toLowerCase().replace("_", "-"); };
+  const khop = ds.filter(function (v) { return loc(v).split("-")[0] === ma; });
+  if (!khop.length) return null;
+  const uu = ma === "en" ? "en-us" : "vi-vn";
+  return khop.filter(function (v) { return loc(v) === uu; })[0] || khop[0];
+}
+function chuanHoaDocTG(chu) { // chữ trên màn -> chữ dễ đọc to (bỏ biểu tượng, đọc số/đơn vị/viết tắt)
+  const en = ngonNguHienTai === "en";
+  let s = String(chu).replace(/:\s*([^→:]+?)\s*→/, function (m, a) { return en ? ": from " + a + " to" : ": từ " + a + " đến"; }); // "Phủ xanh: 0,30 → 0,35" -> "...: từ 0,30 đến 0,35"
+  s = s.replace(/[\u{1F000}-\u{1FFFF}\u{2190}-\u{21FF}\u{2300}-\u{23FF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu, function (k) { return k === "→" ? (en ? " to " : " đến ") : " "; });
+  const huong = en ? { N: "north", S: "south", E: "east", W: "west" } : { B: "vĩ bắc", N: "vĩ nam", "Đ": "kinh đông", T: "kinh tây" };
+  s = s.replace(/(\d+[.,]\d+)\s?°\s?([BNĐTSEW])/g, function (m, so, h) { return so + (en ? " degrees " : " độ ") + (huong[h] || ""); });
+  s = s.replace(/°\s?C/g, en ? " degrees Celsius" : " độ C");
+  s = s.replace(/mm\/ngày/g, " mi-li-mét mỗi ngày").replace(/mm\/day/g, " millimeters per day");
+  s = s.replace(/(\d)\s?[–-]\s?(\d)/g, "$1" + (en ? " to " : " đến ") + "$2");
+  if (en) {
+    s = s.replace(/NDVI/g, "N D V I");
+  } else {
+    s = s.replace(/(\d),(\d)/g, "$1 phẩy $2");
+    s = s.replace(/NDVI/g, "en đê vê i").replace(/NASA/g, "Na-sa").replace(/Green Corner/g, "Grin Co-nơ")
+         .replace(/Phoenix/g, "Phô-ních").replace(/New York/g, "Niu Y-oóc").replace(/Sonoran/g, "Sô-nô-ran").replace(/Arizona/g, "A-ri-dô-na");
+  }
+  return s.replace(/\s+/g, " ").trim();
+}
+function cacDoanDocTG(cacThe) { // thẻ -> các đoạn ngắn (<= ~180 ký tự) để đọc lần lượt, tránh trình duyệt tự cắt đoạn dài
+  const hang = [];
+  cacThe.forEach(function (the) {
+    the.querySelectorAll("h4, p, li, :scope > div").forEach(function (e) {
+      const chu = chuanHoaDocTG(e.textContent);
+      if (!chu) return;
+      chu.replace(/([.!?])\s+/g, "$1\u0001").split("\u0001").forEach(function (c) {
+        c = c.trim(); if (!c) return;
+        while (c.length > 180) { // câu quá dài: cắt ở dấu phẩy/khoảng trắng gần nhất
+          let k = Math.max(c.lastIndexOf(", ", 180), c.lastIndexOf("; ", 180));
+          if (k < 60) k = c.lastIndexOf(" ", 180);
+          if (k < 20) k = 180;
+          hang.push(c.slice(0, k + 1).trim()); c = c.slice(k + 1).trim();
+        }
+        if (c) hang.push(c);
+      });
+    });
+  });
+  return hang;
+}
+function capNhatNutDocTG() { // hiện/ẩn mọi nút đọc theo việc máy có giọng hay không; đổi chữ khi đang đọc
+  const co = !!timGiongDocTG();
+  document.querySelectorAll(".tg-doc-nut").forEach(function (nut) {
+    nut.style.display = co ? "" : "none";
+    const dangDocNut = DOC.dang && DOC.nut === nut;
+    nut.textContent = dangDocNut ? T("tg_doc_dung") : T(nut.getAttribute("data-doc") === "noi" ? "tg_doc_bat" : "tg_doc_bat_gt");
+  });
+  if (!co && DOC.dang) dungDocTG();
+}
+function dungDocTG() {
+  DOC.ma++; DOC.dang = false; DOC.u = null;
+  if (docHoTroTG()) { try { window.speechSynthesis.cancel(); } catch (loi) { /* bỏ qua */ } }
+  capNhatNutDocTG();
+}
+function docTiepTG(ma) {
+  if (ma !== DOC.ma || !DOC.dang) return;
+  if (DOC.vt >= DOC.hang.length) { dungDocTG(); return; }
+  const giong = timGiongDocTG();
+  if (!giong) { dungDocTG(); return; }
+  const u = new window.SpeechSynthesisUtterance(DOC.hang[DOC.vt]);
+  u.voice = giong; u.lang = giong.lang; u.rate = 0.95; u.pitch = 1.05;
+  u.onend = function () { if (ma === DOC.ma) { DOC.vt++; docTiepTG(ma); } };
+  u.onerror = function (e) { if (ma === DOC.ma && !(e && (e.error === "interrupted" || e.error === "canceled"))) dungDocTG(); };
+  DOC.u = u; // giữ tham chiếu: một số trình duyệt thu gom mất khi đang đọc
+  try { window.speechSynthesis.speak(u); } catch (loi) { console.error(loi); dungDocTG(); }
+}
+function docTheTG(loai, nut) {
+  if (DOC.dang) { const cung = DOC.nut === nut; dungDocTG(); if (cung) return; }
+  const goc = document.getElementById("tg-loi-gioithieu");
+  const cacThe = [].slice.call(goc.querySelectorAll(loai === "noi" ? ".tg-the[data-clip=NOI]" : ".tg-the"));
+  const hang = cacDoanDocTG(cacThe);
+  if (!hang.length || !timGiongDocTG()) return;
+  dungChayTG(); // đang phát thì tạm dừng timeline để không chồng tiếng
+  DOC.ma++; DOC.dang = true; DOC.hang = hang; DOC.vt = 0; DOC.nut = nut;
+  capNhatNutDocTG();
+  const ma = DOC.ma;
+  try { window.speechSynthesis.cancel(); } catch (loi) { /* bỏ qua */ }
+  setTimeout(function () { docTiepTG(ma); }, 80); // iOS: chờ sau cancel() rồi mới speak()
+}
+if (docHoTroTG()) { try { window.speechSynthesis.onvoiceschanged = capNhatNutDocTG; } catch (loi) { /* bỏ qua */ } }
 function veLaiLoiTG() { // vẽ lại mọi thẻ lời theo ngôn ngữ hiện tại
   const c = THOI_GIAN.chuoi; if (!c) return;
+  if (DOC.dang) dungDocTG();
   document.getElementById("tg-goiy-nghe").innerHTML = "💡 " + loiTG("D1");
   document.getElementById("tg-loi-gioithieu").innerHTML = ["A1", "A2", "A3"].map(function (id) { return theLoiTG(id); }).join("") + theNoiTG(c);
   document.getElementById("tg-loi-dulieu").innerHTML = TG_LOAI.map(function (l, i) { return theLoiTG("B" + (i + 1), T(l.nhan), l.mau); }).join("");
@@ -2252,6 +2357,8 @@ function veLaiLoiTG() { // vẽ lại mọi thẻ lời theo ngôn ngữ hiện 
     theLoiTG("C1", T("tg_c1_tieude"), null, { a: thangNamDayTG(0), b: thangNamDayTG(c.n - 1) }) +
     theLoiTG("C3", T("tg_c3_tieude"));
   document.getElementById("tg-ket-loi").innerHTML = loiTG("E1") + "<br><br>" + loiTG("E2");
+  capNhatNutDocTG();
+  [400, 1200, 3000].forEach(function (ms) { setTimeout(capNhatNutDocTG, ms); }); // một số trình duyệt nạp danh sách giọng chậm
 }
 
 function capNhatNutThoiGian(id) {
@@ -2302,7 +2409,7 @@ function capNhatNutNgonNguTG() {
 function moManThoiGian(idTuyChon) {
   const id = idTuyChon || khuVucHienTai, kv = timKhuVuc(id);
   if (!kv || CO_CHUOI_THOI_GIAN.indexOf(id) < 0) return;
-  dungChayTG(); tatAmThanhTG();
+  dungDocTG(); dungChayTG(); tatAmThanhTG();
   THOI_GIAN.nguon = idTuyChon ? "ds" : "nghe";
   capNhatNutQuayLaiTG();
   THOI_GIAN.id = id; THOI_GIAN.chuoi = null;
@@ -2440,6 +2547,7 @@ function datViTriTG(vt) {
 }
 async function phatTamDungThoiGian() {
   const c = THOI_GIAN.chuoi; if (!c || THOI_GIAN.dangChuanBi) return;
+  dungDocTG(); // bấm Phát/Tạm dừng thì ngừng đọc to
   if (THOI_GIAN.dangChay) { dungChayTG(); return; }
   const nut = document.getElementById("tg-nut-phat");
   if (AT.dangBat && AT.ctx && AT.ctx.state !== "running") { // hệ thống đã ngắt âm thanh (cuộc gọi, ngủ máy...): hồi sinh ngay trong cú bấm này
@@ -2640,7 +2748,7 @@ function batTatTiengTG() {
 }
 
 function thoatManThoiGian(dich) { // dừng cả timeline lẫn âm thanh
-  dungChayTG(); THOI_GIAN.id = null; tatAmThanhTG();
+  dungDocTG(); dungChayTG(); THOI_GIAN.id = null; tatAmThanhTG();
   hienManHinh(dich);
 }
 function doiNgonNguThoiGian() { // nút VI/EN riêng của màn này (nút ở màn chào không với tới được từ đây)
@@ -2651,7 +2759,7 @@ document.getElementById("tg-thanh").addEventListener("input", function (e) {
   dungChayTG(); datViTriTG(parseFloat(e.target.value));
 });
 document.addEventListener("visibilitychange", function () { // ẩn tab: dừng timeline và im tiếng (không cần resume lại sau)
-  if (document.hidden) dungChayTG();
+  if (document.hidden) { dungChayTG(); dungDocTG(); }
   if (AT.ctx && AT.do) AT.do.master.gain.setTargetAtTime((document.hidden || AT.tat) ? 0 : 0.7, AT.ctx.currentTime, 0.05);
 });
 
