@@ -44,8 +44,8 @@ const VI = { name: 'Linh', lang: 'vi-VN' }, EN = { name: 'Samantha', lang: 'en_U
   };
 
   console.log('\n## 1. Máy KHÔNG có giọng đọc: nút ẩn, app vẫn chạy');
-  { const { ctx, page, issues } = await taoTrang(null);
-    await page.addInitScript(() => {}); await mo(page, 'hanoi');
+  { const { ctx, page, issues } = await taoTrang([]); // danh sách giọng rỗng (không dựa vào giọng thật của máy chạy test)
+    await mo(page, 'hanoi');
     const h = await hien(page);
     ok(h.length === 2 && h.every(x => !x), 'Có 2 nút (nhóm Giới thiệu + thẻ Về nơi này), cả hai ĐỀU ẨN: ' + JSON.stringify(h));
     ok(issues.length === 0, 'Không lỗi ' + JSON.stringify(issues)); await ctx.close(); }
