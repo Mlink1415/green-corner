@@ -35,8 +35,8 @@ Cụ thể app đã làm:
 
 ## Hướng dẫn chơi
 
-1. 🌍 **Khám phá** — chọn cách khám phá: **⏳ theo thời gian** (4 nơi có số
-   liệu 20 năm: Hà Nội, Cần Thơ, Phoenix, New York — mở thẳng màn nghe theo
+1. 🌍 **Khám phá** — chọn cách khám phá: **⏳ theo thời gian** (6 nơi có số
+   liệu 20 năm: Diên An / An Tái (Trung Quốc) và Rondônia (Brazil) ở đầu danh sách, rồi Hà Nội, Cần Thơ, Phoenix, New York — mở thẳng màn nghe theo
    thời gian) hoặc **📍 theo địa điểm** (chọn 1 trong 25 điểm trên Trái Đất:
    thành phố, rừng, sa mạc... rồi đi theo các bước 2–7 dưới đây).
 2. 🎧 **Lắng nghe** — nghe NASA "kể chuyện" bằng âm thanh về mức phủ xanh,
@@ -46,8 +46,10 @@ Cụ thể app đã làm:
    tinh, ảnh nào đúng là của nơi này.
    ⏳ **Khám phá theo thời gian (tuỳ chọn)** — kéo thanh thời gian hoặc bấm Phát
    để nghe hơn 20 năm số liệu NASA (NDVI, nhiệt độ, mưa, gió) trôi qua trong
-   1–4 phút, kèm thẻ giải thích song ngữ Việt/Anh và thẻ "📍 Về nơi này" (có nút 🔊 Nghe đọc bằng giọng đọc có sẵn của trình duyệt, tự ẩn nếu máy không có giọng tiếng Việt/Anh) (nơi ở đâu, khí hậu, 20 năm qua phủ xanh/nhiệt độ/mưa đổi ra sao — tính từ số liệu thật — và nghe sẽ khác thế nào). Hiện có cho **Hà Nội, Cần
+   1–4 phút, kèm thẻ giải thích song ngữ Việt/Anh và thẻ "📍 Về nơi này" (có nút 🔊 Nghe đọc bằng giọng đọc có sẵn của trình duyệt, tự ẩn nếu máy không có giọng tiếng Việt/Anh) (nơi ở đâu, khí hậu, 20 năm qua phủ xanh/nhiệt độ/mưa đổi ra sao — tính từ số liệu thật — và nghe sẽ khác thế nào). Hiện có cho **Diên An / An Tái, Rondônia, Hà Nội, Cần
    Thơ, Phoenix, New York**; nơi khác sẽ ẩn nút này.
+   - **Diên An / An Tái** (Trung Quốc): cao nguyên hoàng thổ được trồng lại cây từ khoảng năm 1999 — trả lời câu hỏi *"Can you hear a landscape becoming greener?"*.
+   - **Rondônia** (Amazon, Brazil): rừng bị chặt để lấy đất — trả lời câu hỏi *"Can you hear vegetation disappearing?"*.
 4. 📚 **Học Hỏi (tuỳ chọn)** — xem tổng hợp kiến thức và số liệu NASA về nơi
    đó nếu muốn tìm hiểu sâu hơn.
 5. 🎨 **Vẽ tranh dự đoán** — dựa vào âm thanh đã nghe, chọn mức phủ xanh /
@@ -75,8 +77,15 @@ Màn "Khám phá theo thời gian" **không gọi API lúc chơi**: số liệu 
 được tải sẵn thành `data/series/<địa-điểm>.json` (vì tải NDVI 20 năm trực tiếp
 mất ~13 phút mỗi nơi). NDVI chỉ nhận đợt đo có cờ độ tin cậy 0 hoặc 1 (không mây,
 không tuyết); tháng không có đợt đo tốt được **nội suy và hiện vùng xám** trên
-biểu đồ cùng dòng chú thích. Tỉ lệ tháng nội suy: Hà Nội 33,7%, New York 34,6%,
+biểu đồ cùng dòng chú thích. Tỉ lệ tháng nội suy: Diên An / An Tái 0,4%, Rondônia 20,7%, Hà Nội 33,7%, New York 34,6%,
 Cần Thơ 58,9%, Phoenix 62,2%.
+
+**Cách chọn điểm đo của Diên An / An Tái và Rondônia.** Mỗi nơi chỉ là 1 ô vệ tinh MODIS ~250 m,
+nên không đại diện cho cả vùng (thẻ "Về nơi này" có nói rõ). Hai ô được chọn bằng cách lấy ảnh NDVI
+mùa hè/mùa khô (2 đợt đo tháng 7–8) của 2006 và của 2025 trong khoảng ±10 km, chỉ nhận ô có cờ
+độ tin cậy 0 hoặc 1, rồi chọn ô mà cả 3×3 ô xung quanh đều đổi rõ:
+Diên An / An Tái (36,9656°B, 109,2634°Đ): NDVI ~0,42 → ~0,77; Rondônia (9,5573°N, 64,061°T): ~0,89 → ~0,36
+(mất rừng rõ từ 2021). Đây là **chọn nơi để kể một câu chuyện**, không phải mức trung bình của vùng.
 
 ## Chạy thử trên máy (dành cho người phát triển)
 
@@ -107,7 +116,7 @@ Cần cài riêng Playwright (`npm i playwright`) và để server chạy:
 ```bash
 NODE_PATH=<thư-mục-có-node_modules> node tools/test_thoigian.js   # màn mới: số liệu, kéo, phát, ngôn ngữ
 NODE_PATH=<...> node tools/test_amthanh.js                         # âm thanh: đo mức, an toàn, lỗi, bị ngắt
-NODE_PATH=<...> node tools/test_chedo.js                            # màn chọn cách khám phá, danh sách 4 nơi
+NODE_PATH=<...> node tools/test_chedo.js                            # màn chọn cách khám phá, danh sách 6 nơi
 NODE_PATH=<...> node tools/test_quaylai.js                          # nút ⬅ Quay lại ở mọi màn (cần mạng)
 NODE_PATH=<...> node tools/audit_en.js                             # rà chữ tiếng Việt còn sót khi bật tiếng Anh (cần mạng)
 NODE_PATH=<...> node tools/test_doc.js                              # nút Nghe đọc (giọng giả): ẩn/hiện, văn bản đọc, tự dừng
@@ -143,7 +152,7 @@ real NASA satellite image (Worldview/GIBS, matched to the exact date of the
 data) with sound synthesized live from that data's actual values — not a
 fixed 3-level lookup, and not pre-made music files in the main flow. A second screen, *"Explore
 through time"*, lets players drag through 20+ years of monthly NASA data
-(NDVI, temperature, rainfall, wind) for four places: the data picks which
+(NDVI, temperature, rainfall, wind) for six places: the data picks which
 part of the piano music plays next, brightens the piano when it's hotter, and
 turns the rain and forest wind sounds up or down (audio from Pixabay) —
 with bilingual (Vietnamese/English) explanations. Live demo above; plain

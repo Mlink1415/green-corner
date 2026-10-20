@@ -5,7 +5,7 @@ Chỉ dùng thư viện chuẩn Python 3.9+. Có cache và chạy tiếp đượ
 Không sửa index.html. Kết quả: data/series/<id>.json (ghi nguyên tử, kiểm tra trước khi ghi).
 
   python3 tools/build_series.py --selftest
-  python3 tools/build_series.py --ids hanoi,cantho,phoenix,newyork
+  python3 tools/build_series.py --ids yanan,rondonia,hanoi,cantho,phoenix,newyork
   python3 tools/build_series.py --verify
 """
 import argparse, datetime, json, os, re, sys, time, urllib.request
@@ -223,7 +223,7 @@ def verify(out_dir):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--ids", default="hanoi,cantho,phoenix,newyork"); ap.add_argument("--start", default="2006-01"); ap.add_argument("--end", default="2026-06")
+    ap.add_argument("--ids", default="yanan,rondonia,hanoi,cantho,phoenix,newyork"); ap.add_argument("--start", default="2006-01"); ap.add_argument("--end", default="2026-06")
     ap.add_argument("--out", default=os.path.join(ROOT, "data", "series"))
     ap.add_argument("--cache", default=os.path.expanduser("~/.cache/green-corner-series"))
     ap.add_argument("--workers", type=int, default=3); ap.add_argument("--selftest", action="store_true"); ap.add_argument("--verify", action="store_true")

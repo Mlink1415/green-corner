@@ -18,6 +18,8 @@ MUA_VU = {
     "cantho":  {"nong_nhat": (3, 4, 5, 6), "lanh_nhat": (12, 1, 2), "mua_nhat": (6, 7, 8, 9, 10)},
     "phoenix": {"nong_nhat": (6, 7, 8), "lanh_nhat": (12, 1, 2)},
     "newyork": {"nong_nhat": (6, 7, 8), "lanh_nhat": (12, 1, 2)},
+    "yanan":   {"nong_nhat": (6, 7, 8), "lanh_nhat": (12, 1, 2), "mua_nhat": (7, 8, 9)},
+    "rondonia": {"nong_nhat": (8, 9, 10, 11), "lanh_nhat": (5, 6, 7, 8), "mua_nhat": (12, 1, 2, 3)},
 }
 ok_all = True
 def kiem(cond, msg):
@@ -71,7 +73,7 @@ def kiem_mot(lid, live):
         except Exception as e: kiem(False, "không gọi được NASA POWER: %s" % e)
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("--ids", default="hanoi,cantho,phoenix,newyork"); ap.add_argument("--no-live", action="store_true")
+    ap = argparse.ArgumentParser(); ap.add_argument("--ids", default="yanan,rondonia,hanoi,cantho,phoenix,newyork"); ap.add_argument("--no-live", action="store_true")
     a = ap.parse_args()
     for lid in [x for x in a.ids.split(",") if x]: kiem_mot(lid, not a.no_live)
     print("\n" + ("TẤT CẢ ĐẠT" if ok_all else "CÓ LỖI")); return 0 if ok_all else 1

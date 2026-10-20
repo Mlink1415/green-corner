@@ -34,7 +34,7 @@ const ok = (c, m) => { console.log((c ? 'OK   ' : 'LỖI ') + m); if (!c) fails+
 
     await page.click('[data-i18n="chao_nut_batdau"]'); await page.click('#nut-chedo-diadiem');
     await bam('man-chedo', 'Theo địa điểm -> Quay lại');
-    await page.click('#nut-chedo-thoigian'); await bam('man-chedo', 'Danh sách 4 nơi -> Quay lại');
+    await page.click('#nut-chedo-thoigian'); await bam('man-chedo', 'Danh sách 6 nơi -> Quay lại');
 
     // màn thời gian từ danh sách: Phát, rồi Quay lại phải DỪNG âm thanh và về danh sách
     await page.click('#nut-chedo-thoigian'); await page.click('#danh-sach-thoigian .tile:nth-child(1)');

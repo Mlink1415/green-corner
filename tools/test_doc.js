@@ -62,7 +62,7 @@ const VI = { name: 'Linh', lang: 'vi-VN' }, EN = { name: 'Samantha', lang: 'en_U
     ok((await hien(page)).every(x => x), 'Giọng về muộn: nút hiện'); await ctx.close(); }
 
   console.log('\n## 4. Đọc cả phần Giới thiệu (tiếng Việt)');
-  for (const id of ['hanoi', 'phoenix']) {
+  for (const id of ['hanoi', 'phoenix', 'yanan', 'rondonia']) {
     const { ctx, page, issues } = await taoTrang([VI]);
     await mo(page, id);
     await page.click('#tg-nut-phat'); await page.waitForTimeout(500);
@@ -79,7 +79,7 @@ const VI = { name: 'Linh', lang: 'vi-VN' }, EN = { name: 'Samantha', lang: 'en_U
     ok(!/NDVI|NASA|Green Corner|°|mm\/ngày/.test(toan), id + ': đã đổi NDVI/NASA/Green Corner/°/mm/ngày sang chữ đọc được');
     ok(/en đê vê i/.test(toan) && /Grin Co-nơ/.test(toan) && /mi-li-mét mỗi ngày/.test(toan) && /độ C/.test(toan) && /phẩy/.test(toan), id + ': có "en đê vê i", "Grin Co-nơ", "mi-li-mét mỗi ngày", "độ C", "phẩy"');
     ok(/Về nơi này/.test(toan) && /Điểm NASA|Điểm Na-sa/.test(toan), id + ': có đọc thẻ Về nơi này');
-    ok(/vĩ bắc/.test(toan) && /kinh (đông|tây)/.test(toan), id + ': tọa độ đọc là "độ vĩ bắc / kinh ..."');
+    ok((id === 'rondonia' ? /vĩ nam/ : /vĩ bắc/).test(toan) && (id === 'rondonia' ? /kinh tây/ : /kinh (đông|tây)/).test(toan), id + ': tọa độ đọc đúng bán cầu ("độ vĩ bắc/nam, kinh đông/tây")');
     ok(await page.evaluate(() => !DOC.dang) && (await page.textContent('.tg-doc-nut[data-doc=gioithieu]')).includes('Nghe đọc'), id + ': đọc xong -> nút về "Nghe đọc"');
     if (id === 'hanoi') console.log('       mẫu: ' + S.slice(8, 14).map(x => x.text).join(' | ').slice(0, 330));
     ok(issues.length === 0, id + ': không lỗi ' + JSON.stringify(issues)); await ctx.close();
@@ -119,7 +119,7 @@ const VI = { name: 'Linh', lang: 'vi-VN' }, EN = { name: 'Samantha', lang: 'en_U
   }
 
   console.log('\n## 7. Tiếng Anh với giọng en');
-  for (const id of ['phoenix', 'newyork']) {
+  for (const id of ['phoenix', 'newyork', 'yanan', 'rondonia']) {
     const { ctx, page, issues } = await taoTrang([VI, EN]);
     await mo(page, id); await page.click('#nut-ngonngu-tg'); await page.waitForTimeout(150);
     await page.evaluate(() => document.querySelectorAll('.tg-tuychinh[id^=tg-nhom]').forEach(d => d.open = true));
@@ -127,7 +127,7 @@ const VI = { name: 'Linh', lang: 'vi-VN' }, EN = { name: 'Samantha', lang: 'en_U
     await page.click('.tg-doc-nut[data-doc=gioithieu]'); await page.waitForFunction(() => !DOC.dang, null, { timeout: 15000 });
     const S = await page.evaluate(() => __S.spoken), toan = S.map(x => x.text).join(' | ');
     ok(S.length >= 10 && S.every(x => x.voice === 'Samantha'), id + ': ' + S.length + ' đoạn, dùng giọng en');
-    ok(!VN.test(toan.replace(/São/g, '')) && !EMOJI.test(toan) && !/→|°|mm\/day/.test(toan), id + ': không lẫn dấu Việt/emoji/ký hiệu');
+    ok(!VN.test(toan.replace(/São/g, '').replace(/Rondônia/g, '')) && !EMOJI.test(toan) && !/→|°|mm\/day/.test(toan), id + ': không lẫn dấu Việt/emoji/ký hiệu');
     ok(/degrees Celsius/.test(toan) && /millimeters per day/.test(toan) && /degrees (north|south)/.test(toan) && /N D V I/.test(toan), id + ': có "degrees Celsius", "millimeters per day", "degrees north", "N D V I"');
     ok(/ to /.test(toan), id + ': mũi tên/khoảng năm đọc là "to"');
     if (id === 'phoenix') console.log('       mẫu: ' + S.slice(5, 9).map(x => x.text).join(' | ').slice(0, 300));

@@ -23,7 +23,7 @@ let tong = 0;
       });
       return out;
     });
-    const sot = dong.filter(t => VN.test(t.replace(/São/g, 'Sao')));
+    const sot = dong.filter(t => VN.test(t.replace(/São/g, 'Sao').replace(/Rondônia/g, 'Rondonia')));
     console.log((sot.length ? 'SÓT ' : 'OK   ') + ten + (sot.length ? ' — ' + sot.length + ' dòng' : ''));
     sot.forEach(t => console.log('       · ' + t.slice(0, 150)));
     tong += sot.length;

@@ -24,7 +24,8 @@ function tinh(id) {
   return r;
 }
 const TEN = { hanoi: ['Hà Nội', 'Việt Nam', 'Hanoi', 'Vietnam'], cantho: ['Cần Thơ', 'Việt Nam', 'Can Tho', 'Vietnam'],
-  phoenix: ['Phoenix', 'Mỹ', 'Phoenix', 'United States'], newyork: ['New York', 'Mỹ', 'New York', 'United States'] };
+  phoenix: ['Phoenix', 'Mỹ', 'Phoenix', 'United States'], newyork: ['New York', 'Mỹ', 'New York', 'United States'],
+  yanan: ['An Tái', 'Trung Quốc', 'Ansai', 'China'], rondonia: ['Rondônia', 'Brazil', 'Rondônia', 'Brazil'] };
 const TU = { N: { vi: ['tăng khá rõ', 'tăng nhẹ', 'gần như không đổi', 'giảm nhẹ', 'giảm khá rõ'], en: ['rising clearly', 'rising slightly', 'almost unchanged', 'falling slightly', 'falling clearly'] },
   T: { vi: ['ấm lên khá rõ', 'ấm lên nhẹ', 'gần như không đổi', 'mát đi nhẹ', 'mát đi khá rõ'], en: ['clearly warmer', 'slightly warmer', 'almost unchanged', 'slightly cooler', 'clearly cooler'] },
   P: { vi: ['mưa nhiều hơn khá rõ', 'mưa nhiều hơn nhẹ', 'gần như không đổi', 'mưa ít đi nhẹ', 'mưa ít đi khá rõ'], en: ['clearly wetter', 'slightly wetter', 'almost unchanged', 'slightly drier', 'clearly drier'] } };
@@ -51,7 +52,7 @@ const TU = { N: { vi: ['tăng khá rõ', 'tăng nhẹ', 'gần như không đổ
     let t = await the();
     ok(!!t, 'Có thẻ "Về nơi này"');
     ok(t.includes(TEN[id][0]) && t.includes(TEN[id][1]), 'Nêu nơi và quốc gia: ' + TEN[id][0] + ', ' + TEN[id][1]);
-    ok(/nhiệt đới|ôn đới|sa mạc/.test(t), 'Nêu vùng khí hậu');
+    ok(/nhiệt đới|ôn đới|sa mạc|bán khô hạn/.test(t), 'Nêu vùng khí hậu');
     ok(t.includes(fmt(Math.abs(r.lat), 2, 'vi-VN') + '°') && t.includes(fmt(Math.abs(r.lon), 2, 'vi-VN') + '°'), 'Tọa độ khớp số liệu');
     ok(t.includes('tháng ' + r.T.thMx + ' (khoảng ' + fmt(r.T.mx, 1, 'vi-VN') + ' °C)') && t.includes('tháng ' + r.T.thMn + ' (khoảng ' + fmt(r.T.mn, 1, 'vi-VN') + ' °C)'), 'Tháng nóng/lạnh nhất khớp tính độc lập');
     ok(t.includes('tháng ' + r.P.thMx + ' (' + fmt(r.P.mx, 1, 'vi-VN') + ' mm/ngày)') && t.includes('tháng ' + r.P.thMn + ' (' + fmt(r.P.mn, 1, 'vi-VN') + ' mm/ngày)'), 'Tháng mưa nhiều/ít nhất khớp');
@@ -67,7 +68,7 @@ const TU = { N: { vi: ['tăng khá rõ', 'tăng nhẹ', 'gần như không đổ
     await page.evaluate(() => doiNgonNguThoiGian());
     await page.evaluate(() => document.querySelectorAll('.tg-tuychinh[id^=tg-nhom]').forEach(d => d.open = true));
     t = await the();
-    ok(t && !VN.test(t.replace(/Đ/g, '')) && t.includes(TEN[id][2]) && t.includes(TEN[id][3]), 'EN: không lẫn dấu tiếng Việt, nêu ' + TEN[id][2] + ', ' + TEN[id][3]);
+    ok(t && !VN.test(t.replace(/Đ/g, '').replace(/Rondônia/g, 'Rondonia')) && t.includes(TEN[id][2]) && t.includes(TEN[id][3]), 'EN: không lẫn dấu tiếng Việt, nêu ' + TEN[id][2] + ', ' + TEN[id][3]);
     ok(t.includes(fmt(Math.abs(r.lat), 2, 'en-US') + '°') && t.includes(fmt(r.T.mx, 1, 'en-US') + ' °C'), 'EN: số đúng định dạng en-US');
     ok(TU.N.en[r.N.muc] && t.includes(fmt(r.N.dau, 2, 'en-US') + ' → ' + fmt(r.N.cuoi, 2, 'en-US') + ', ' + TU.N.en[r.N.muc]) && t.includes(TU.P.en[r.P.muc]), 'EN: mô tả mức đổi khớp');
     ok(!/undefined|NaN|\{[a-z0-9]+\}/.test(t), 'EN: không sót tham số');
