@@ -57,7 +57,7 @@ Cụ thể app đã làm:
    - **Diên An / An Tái** (Trung Quốc): cao nguyên hoàng thổ được trồng lại cây từ khoảng năm 1999 — trả lời câu hỏi *"Can you hear a landscape becoming greener?"*.
    - **Rondônia** (Amazon, Brazil): rừng bị chặt để lấy đất — trả lời câu hỏi *"Can you hear vegetation disappearing?"*.
    - **Yakutsk** (Siberia, Nga): vùng lạnh nhiều tuyết — mùa đông tới khoảng −37 °C trung bình tháng, dế im khoảng 7 tháng mỗi năm; *"Can you hear a silent winter?"*. Mưa ở đây tính cả tuyết tan thành nước (NASA POWER), nên tuyết nghe như mưa rất nhẹ.
-   - **Djibouti** (Đông Phi): sa mạc nóng quanh năm — tháng nào cũng trên 24 °C, gần như không mưa, dế kêu nhanh quanh năm; *"Can you hear a heat that never rests?"*.
+   - **Djibouti** (Đông Phi): sa mạc nóng quanh năm — trung bình mỗi tháng trong năm đều trên 24 °C, gần như không mưa, dế kêu nhanh quanh năm; *"Can you hear a heat that never rests?"*.
 4. 📚 **Học Hỏi (tuỳ chọn)** — xem tổng hợp kiến thức và số liệu NASA về nơi
    đó nếu muốn tìm hiểu sâu hơn.
 5. 🎨 **Vẽ tranh dự đoán** — dựa vào âm thanh đã nghe, chọn mức phủ xanh /
