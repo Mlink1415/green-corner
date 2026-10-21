@@ -41,8 +41,8 @@ Cụ thể app đã làm:
 
 ## Hướng dẫn chơi
 
-1. 🌍 **Khám phá** — chọn cách khám phá: **⏳ theo thời gian** (6 nơi có số
-   liệu 20 năm: Diên An / An Tái (Trung Quốc) và Rondônia (Brazil) ở đầu danh sách, rồi Hà Nội, Cần Thơ, Phoenix, New York — mở thẳng màn nghe theo
+1. 🌍 **Khám phá** — chọn cách khám phá: **⏳ theo thời gian** (8 nơi có số
+   liệu 20 năm: Diên An / An Tái (Trung Quốc), Rondônia (Brazil), Yakutsk (Siberia, Nga) và Djibouti (Đông Phi) ở đầu danh sách, rồi Hà Nội, Cần Thơ, Phoenix, New York — mở thẳng màn nghe theo
    thời gian) hoặc **📍 theo địa điểm** (chọn 1 trong 25 điểm trên Trái Đất:
    thành phố, rừng, sa mạc... rồi đi theo các bước 2–7 dưới đây).
 2. 🎧 **Lắng nghe** — nghe NASA "kể chuyện" bằng âm thanh về mức phủ xanh,
@@ -52,10 +52,12 @@ Cụ thể app đã làm:
    tinh, ảnh nào đúng là của nơi này.
    ⏳ **Khám phá theo thời gian (tuỳ chọn)** — kéo thanh thời gian hoặc bấm Phát
    để nghe hơn 20 năm số liệu NASA (NDVI, nhiệt độ, mưa, gió) trôi qua trong
-   1–4 phút, kèm thẻ giải thích song ngữ Việt/Anh và thẻ "📍 Về nơi này" (có nút 🔊 Nghe đọc bằng giọng đọc có sẵn của trình duyệt, tự ẩn nếu máy không có giọng tiếng Việt/Anh) (nơi ở đâu, khí hậu, 20 năm qua phủ xanh/nhiệt độ/mưa đổi ra sao — tính từ số liệu thật — và nghe sẽ khác thế nào). Hiện có cho **Diên An / An Tái, Rondônia, Hà Nội, Cần
+   1–4 phút, kèm thẻ giải thích song ngữ Việt/Anh và thẻ "📍 Về nơi này" (có nút 🔊 Nghe đọc bằng giọng đọc có sẵn của trình duyệt, tự ẩn nếu máy không có giọng tiếng Việt/Anh) (nơi ở đâu, khí hậu, 20 năm qua phủ xanh/nhiệt độ/mưa đổi ra sao — tính từ số liệu thật — và nghe sẽ khác thế nào). Hiện có cho **Diên An / An Tái, Rondônia, Yakutsk, Djibouti, Hà Nội, Cần
    Thơ, Phoenix, New York**; nơi khác sẽ ẩn nút này.
    - **Diên An / An Tái** (Trung Quốc): cao nguyên hoàng thổ được trồng lại cây từ khoảng năm 1999 — trả lời câu hỏi *"Can you hear a landscape becoming greener?"*.
    - **Rondônia** (Amazon, Brazil): rừng bị chặt để lấy đất — trả lời câu hỏi *"Can you hear vegetation disappearing?"*.
+   - **Yakutsk** (Siberia, Nga): vùng lạnh nhiều tuyết — mùa đông tới khoảng −37 °C trung bình tháng, dế im khoảng 7 tháng mỗi năm; *"Can you hear a silent winter?"*. Mưa ở đây tính cả tuyết tan thành nước (NASA POWER), nên tuyết nghe như mưa rất nhẹ.
+   - **Djibouti** (Đông Phi): sa mạc nóng quanh năm — tháng nào cũng trên 24 °C, gần như không mưa, dế kêu nhanh quanh năm; *"Can you hear a heat that never rests?"*.
 4. 📚 **Học Hỏi (tuỳ chọn)** — xem tổng hợp kiến thức và số liệu NASA về nơi
    đó nếu muốn tìm hiểu sâu hơn.
 5. 🎨 **Vẽ tranh dự đoán** — dựa vào âm thanh đã nghe, chọn mức phủ xanh /
@@ -83,8 +85,8 @@ Màn "Khám phá theo thời gian" **không gọi API lúc chơi**: số liệu 
 được tải sẵn thành `data/series/<địa-điểm>.json` (vì tải NDVI 20 năm trực tiếp
 mất ~13 phút mỗi nơi). NDVI chỉ nhận đợt đo có cờ độ tin cậy 0 hoặc 1 (không mây,
 không tuyết); tháng không có đợt đo tốt được **nội suy và hiện vùng xám** trên
-biểu đồ cùng dòng chú thích. Tỉ lệ tháng nội suy: Diên An / An Tái 0,4%, Rondônia 20,7%, Hà Nội 33,7%, New York 34,6%,
-Cần Thơ 58,9%, Phoenix 62,2%.
+biểu đồ cùng dòng chú thích. Tỉ lệ tháng nội suy: Diên An / An Tái 0,4%, Djibouti 0,8%, Rondônia 20,7%, Hà Nội 33,7%, New York 34,6%,
+Yakutsk 48,8% (các tháng tuyết phủ), Cần Thơ 58,9%, Phoenix 62,2%.
 
 **Cách chọn điểm đo của Diên An / An Tái và Rondônia.** Mỗi nơi chỉ là 1 ô vệ tinh MODIS ~250 m,
 nên không đại diện cho cả vùng (thẻ "Về nơi này" có nói rõ). Hai ô được chọn bằng cách lấy ảnh NDVI
@@ -92,6 +94,13 @@ mùa hè/mùa khô (2 đợt đo tháng 7–8) của 2006 và của 2025 trong k
 độ tin cậy 0 hoặc 1, rồi chọn ô mà cả 3×3 ô xung quanh đều đổi rõ:
 Diên An / An Tái (36,9656°B, 109,2634°Đ): NDVI ~0,42 → ~0,77; Rondônia (9,5573°N, 64,061°T): ~0,89 → ~0,36
 (mất rừng rõ từ 2021). Đây là **chọn nơi để kể một câu chuyện**, không phải mức trung bình của vùng.
+
+**Yakutsk và Djibouti** được thêm sau để so sánh cực đoan về khí hậu. Điểm đo chọn bằng cách thử một số ô quanh nơi đó,
+lấy ô trên đất liền (không phải sông, biển), NDVI ổn định giữa các năm và đủ đợt đo tốt:
+Yakutsk (61,95°B, 129,5°Đ, rừng thưa gần thành phố, NDVI mùa hè ~0,7) và Djibouti (11,45°B, 42,95°Đ,
+đất khô nội địa cách thành phố khoảng 30 km, NDVI ~0,06–0,13). Nhiệt độ, mưa, gió là của lưới NASA POWER rộng
+~0,5° quanh điểm đó. Hai nơi này không đại diện cho cả vùng, và ở sa mạc NDVI rất thấp nên piano chỉ cho biết
+thay đổi nhỏ so với chính nơi đó.
 
 ## Chạy thử trên máy (dành cho người phát triển)
 
@@ -122,7 +131,7 @@ Cần cài riêng Playwright (`npm i playwright`) và để server chạy:
 ```bash
 NODE_PATH=<thư-mục-có-node_modules> node tools/test_thoigian.js   # màn mới: số liệu, kéo, phát, ngôn ngữ
 NODE_PATH=<...> node tools/test_amthanh.js                         # âm thanh: đo mức, an toàn, lỗi, bị ngắt
-NODE_PATH=<...> node tools/test_chedo.js                            # màn chọn cách khám phá, danh sách 6 nơi
+NODE_PATH=<...> node tools/test_chedo.js                            # màn chọn cách khám phá, danh sách 8 nơi
 NODE_PATH=<...> node tools/test_quaylai.js                          # nút ⬅ Quay lại ở mọi màn (cần mạng)
 NODE_PATH=<...> node tools/audit_en.js                             # rà chữ tiếng Việt còn sót khi bật tiếng Anh (cần mạng)
 NODE_PATH=<...> node tools/test_doc.js                              # nút Nghe đọc (giọng giả): ẩn/hiện, văn bản đọc, tự dừng

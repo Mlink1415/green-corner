@@ -23,7 +23,7 @@ Green Corner là web app tĩnh (không có máy chủ riêng) đổi số liệu
 Hai luồng chính của sản phẩm:
 
 - **Khám phá theo địa điểm** (25 nơi): gọi NASA lúc chơi, nghe 3 chỉ số, đố vui, vẽ dự đoán, so sánh với NASA, ghi điểm.
-- **Khám phá theo thời gian** (6 nơi): số liệu theo tháng 01/2006 đến 06/2026 đã được tải sẵn thành file, kéo thanh thời gian để nghe piano, mưa, gió thay đổi theo số liệu.
+- **Khám phá theo thời gian** (8 nơi): số liệu theo tháng 01/2006 đến 06/2026 đã được tải sẵn thành file, kéo thanh thời gian để nghe piano, mưa, gió thay đổi theo số liệu.
 
 Ngoài ra có chế độ **Đội Tuần Tra Xanh** (xếp hạng điểm theo mức xanh trong một quốc gia) và màn **Green Corner của em** (hành động ngoài đời thật).
 
@@ -41,7 +41,7 @@ flowchart TB
   end
   subgraph Static["File tĩnh trên GitHub Pages"]
     HTML["index.html"]
-    SER["data/series/*.json (6 nơi)"]
+    SER["data/series/*.json (8 nơi)"]
     PS["data/piano-slices.json"]
     WAV["assets/audio/*"]
   end
@@ -88,7 +88,7 @@ green-corner/
 │   ├── piano-slices.json    30 đoạn piano: a, b (giây), r (độ sôi động 0 đến 1)
 │   ├── cricket-chirps.json  24 cặp [bắt đầu, kết thúc] (giây): vị trí từng tiếng dế trong cricket-chirps.wav
 │   ├── thunder-clips.json   4 cặp [bắt đầu, kết thúc]: vị trí từng clip sấm trong thunder.wav
-│   └── series/<nơi>.json    Số liệu theo tháng của 6 nơi (xem mục 6.2)
+│   └── series/<nơi>.json    Số liệu theo tháng của 8 nơi (xem mục 6.2)
 └── tools/
     ├── build_series.py      Tải NASA, xử lý, ghi data/series
     ├── check_series.py      Kiểm chéo số liệu
@@ -113,7 +113,7 @@ Mỗi màn là một thẻ `div.screen` với `id` riêng; chỉ một màn có 
 | Vẽ tranh | `man-ve` | Chọn mức cây, nhiệt độ, mưa | `man-nghe` |
 | So sánh NASA | `man-sosanh` | Đối chiếu dự đoán, chấm sao | `man-ve` |
 | Green Corner của em | `man-gocxanh` | Gợi ý hành động, ghi chú | màn đứng trước |
-| Chọn nơi (thời gian) | `man-tg-chon` | 6 nơi có chuỗi 20 năm | `man-chedo` |
+| Chọn nơi (thời gian) | `man-tg-chon` | 8 nơi có chuỗi 20 năm | `man-chedo` |
 | Màn thời gian | `man-thoigian` | Thanh thời gian, 4 biểu đồ, âm thanh | xử lý riêng (xem dưới) |
 | Tuần tra: quốc gia | `man-tuantra-quocgia` | Chọn 1 trong 7 nước | `man-chao` |
 | Tuần tra: đoán | `man-tuantra-doan` | Xếp hạng điểm | `man-tuantra-quocgia` |
@@ -191,7 +191,7 @@ Mỗi file khoảng 6 đến 7 KB. Trước khi dùng, `chuoiHopLeTG()` kiểm t
 
 `tools/check_series.py` kiểm chéo độc lập: tháng nóng, lạnh, mưa nhiều nhất đúng mùa của từng nơi; so 4 tháng mỗi nơi với NASA POWER gọi trực tiếp; tính lại NDVI từ dữ liệu thô bằng đoạn mã khác và so ở mọi tháng không nội suy.
 
-**Hai nơi thêm sau** (Diên An / An Tái và Rondônia) nằm trong `KHU_VUC_THOI_GIAN`, không thuộc 25 nơi của bản đồ. Điểm đo được chọn bằng cách so ảnh NDVI mùa hè 2006 với 2025 trong bán kính 10 km (xem README).
+**Bốn nơi thêm sau** (Diên An / An Tái, Rondônia, Yakutsk, Djibouti) nằm trong `KHU_VUC_THOI_GIAN`, không thuộc 25 nơi của bản đồ. Điểm đo của hai nơi đầu được chọn bằng cách so ảnh NDVI mùa hè 2006 với 2025 trong bán kính 10 km; Yakutsk và Djibouti chọn ô trên đất liền có NDVI ổn định (xem README). Yakutsk nội suy 48,8% vì các tháng tuyết phủ bị loại. Kiểm tra giá trị hợp lý của `build_series.py` cho nhiệt độ tháng là −60 đến 55 °C (Yakutsk có tháng −42,7 °C).
 
 `data/piano-slices.json` gồm 30 phần tử `{ a, b, r }`: bắt đầu, kết thúc (giây) và độ sôi động `r` từ 0 đến 1 của từng đoạn piano. Được tạo một lần bằng phân tích âm thanh (librosa), không nằm trong kho này.
 
@@ -313,9 +313,9 @@ NODE_PATH=<thư-mục-có-playwright> node tools/test_thoigian.js
 | `test_thoigian.js` | Số liệu, kéo thanh, phát, ngôn ngữ của màn thời gian |
 | `test_amthanh.js` | Mức âm, không vỡ tiếng, độ dài giải mã, RAM, dế theo nhiệt độ, lỗi, bị ngắt, tải một lần |
 | `test_dem_mua.js` | Dế và mưa + sấm theo MỘT THANG CHUNG ở cả hai luồng: nhịp dế theo Dolbear, độ lợi mưa, sấm chỉ từ 8 mm, nơi khác nhau cùng giá trị thì nghe như nhau, dế/mưa im, lời giải thích VI/EN, nạp lỗi thì dùng giai điệu cũ |
-| `test_chedo.js` | Màn chọn cách khám phá, danh sách 6 nơi, thứ tự |
+| `test_chedo.js` | Màn chọn cách khám phá, danh sách 8 nơi, thứ tự |
 | `test_quaylai.js` | Nút Quay lại ở mọi màn (cần mạng) |
-| `test_noi.js` | Thẻ "Về nơi này": đối chiếu số với số liệu gốc cho cả 6 nơi, tiếng Việt và tiếng Anh |
+| `test_noi.js` | Thẻ "Về nơi này": đối chiếu số với số liệu gốc cho cả 8 nơi, tiếng Việt và tiếng Anh |
 | `test_loi.js` | Thẻ lời song ngữ, độ dài câu |
 | `test_doc.js` | Nút Nghe đọc (giọng giả): ẩn hiện, văn bản đọc, tự dừng |
 | `audit_en.js` | Rà chữ tiếng Việt sót khi bật tiếng Anh (cần mạng) |
@@ -330,7 +330,7 @@ Kết quả gần nhất (2026-10-21, sau khi đổi sang tiếng dế và mưa 
 
 - **Chạy thử trên máy:** `python3 serve.py` rồi mở `http://localhost:8010`.
 - **Phát hành:** đẩy lên nhánh `main` của https://github.com/Mlink1415/green-corner; GitHub Pages tự phục vụ thư mục gốc. Không có bước build, không có tệp cấu hình triển khai.
-- **Cập nhật số liệu:** `python3 tools/build_series.py --ids yanan,rondonia,hanoi,cantho,phoenix,newyork` (khoảng 13 phút mỗi nơi, có thể chạy tiếp), rồi `python3 tools/check_series.py`.
+- **Cập nhật số liệu:** `python3 tools/build_series.py --ids yanan,rondonia,yakutsk,djibouti,hanoi,cantho,phoenix,newyork` (khoảng 13 phút mỗi nơi, có thể chạy tiếp), rồi `python3 tools/check_series.py`.
 - **Bộ nhớ đệm của trình duyệt:** tên file không có mã băm, nên sau khi phát hành người dùng có thể thấy bản cũ vài phút đến khi tải lại.
 
 ### Thêm một nơi mới vào màn thời gian

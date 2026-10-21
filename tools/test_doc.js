@@ -62,7 +62,7 @@ const VI = { name: 'Linh', lang: 'vi-VN' }, EN = { name: 'Samantha', lang: 'en_U
     ok((await hien(page)).every(x => x), 'Giọng về muộn: nút hiện'); await ctx.close(); }
 
   console.log('\n## 4. Đọc cả phần Giới thiệu (tiếng Việt)');
-  for (const id of ['hanoi', 'phoenix', 'yanan', 'rondonia']) {
+  for (const id of ['hanoi', 'phoenix', 'yanan', 'rondonia', 'yakutsk', 'djibouti']) {
     const { ctx, page, issues } = await taoTrang([VI]);
     await mo(page, id);
     await page.click('#tg-nut-phat'); await page.waitForTimeout(500);
@@ -119,7 +119,7 @@ const VI = { name: 'Linh', lang: 'vi-VN' }, EN = { name: 'Samantha', lang: 'en_U
   }
 
   console.log('\n## 7. Tiếng Anh với giọng en');
-  for (const id of ['phoenix', 'newyork', 'yanan', 'rondonia']) {
+  for (const id of ['phoenix', 'newyork', 'yanan', 'rondonia', 'yakutsk', 'djibouti']) {
     const { ctx, page, issues } = await taoTrang([VI, EN]);
     await mo(page, id); await page.click('#nut-ngonngu-tg'); await page.waitForTimeout(150);
     await page.evaluate(() => document.querySelectorAll('.tg-tuychinh[id^=tg-nhom]').forEach(d => d.open = true));

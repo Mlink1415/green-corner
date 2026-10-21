@@ -32,12 +32,12 @@ const ok = (cond, msg) => { console.log((cond ? 'OK   ' : 'LỖI ') + msg); if (
   ok(await page.evaluate(() => document.querySelectorAll('#danh-sach-khu-vuc .tile').length) === 25, 'Vẫn đủ 25 địa điểm');
   await page.evaluate(() => hienManHinh('man-chedo'));
 
-  console.log('\n## 3. Khám phá theo thời gian: 6 nơi');
+  console.log('\n## 3. Khám phá theo thời gian: 8 nơi');
   await page.click('#nut-chedo-thoigian');
   ok(await man() === 'man-tg-chon', 'Vào man-tg-chon');
   const ten = await page.evaluate(() => [...document.querySelectorAll('#danh-sach-thoigian .label')].map(e => e.textContent));
-  ok(JSON.stringify(ten) === JSON.stringify(['Diên An / An Tái, Trung Quốc', 'Rondônia, Amazon, Brazil', 'Hà Nội', 'Cần Thơ', 'Phoenix, Mỹ', 'New York, Mỹ']), '6 nơi đúng thứ tự (2 nơi mới lên đầu): ' + ten.join(' | '));
-  await page.click('#danh-sach-thoigian .tile:nth-child(4)');
+  ok(JSON.stringify(ten) === JSON.stringify(['Diên An / An Tái, Trung Quốc', 'Rondônia, Amazon, Brazil', 'Yakutsk, Siberia, Nga', 'Djibouti, Đông Phi', 'Hà Nội', 'Cần Thơ', 'Phoenix, Mỹ', 'New York, Mỹ']), '8 nơi đúng thứ tự (4 nơi kể chuyện lên đầu): ' + ten.join(' | '));
+  await page.click('#danh-sach-thoigian .tile:nth-child(6)');
   await page.waitForSelector('#tg-noidung', { state: 'visible', timeout: 10000 });
   ok(await man() === 'man-thoigian' && (await chu('#tg-ten')) === 'Cần Thơ', 'Chạm Cần Thơ -> mở thẳng màn thời gian (Cần Thơ)');
   ok((await chu('#tg-nut-quaylai')).includes('Chọn nơi khác'), 'Nút dưới cùng: "Chọn nơi khác"');
@@ -58,8 +58,8 @@ const ok = (cond, msg) => { console.log((cond ? 'OK   ' : 'LỖI ') + msg); if (
   ok((await chu('#tg-nut-quaylai')).includes('Choose another place'), 'EN: nút dưới cùng đổi sang tiếng Anh');
   await page.click('#tg-nut-quaylai');
   const tenEn = await page.evaluate(() => [...document.querySelectorAll('#danh-sach-thoigian .label')].map(e => e.textContent));
-  ok(tenEn[0] === "Yan'an / Ansai, China" && tenEn[2] === 'Hanoi' && tenEn[5] === 'New York, USA', 'EN: danh sách nơi vẽ lại bằng tiếng Anh: ' + tenEn.join(' | '));
-  ok((await chu('[data-i18n="tgchon_goiy"]')).startsWith('Pick one of 6'), 'EN: câu gợi ý đổi sang tiếng Anh');
+  ok(tenEn[0] === "Yan'an / Ansai, China" && tenEn[2] === 'Yakutsk, Siberia, Russia' && tenEn[3] === 'Djibouti, East Africa' && tenEn[4] === 'Hanoi' && tenEn[7] === 'New York, USA', 'EN: danh sách nơi vẽ lại bằng tiếng Anh: ' + tenEn.join(' | '));
+  ok((await chu('[data-i18n="tgchon_goiy"]')).startsWith('Pick one of 8'), 'EN: câu gợi ý đổi sang tiếng Anh');
   await page.click('[data-i18n="tgchon_quaylai"]');
   ok(await man() === 'man-chedo' && (await chu('#nut-chedo-diadiem')).includes('Explore by place'), 'EN: về màn chọn cách, thẻ tiếng Anh');
   await page.evaluate(() => doiNgonNgu());
