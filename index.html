@@ -414,6 +414,7 @@
       </div>
       <div class="tg-tt" id="tg-amthanh-tt"></div>
       <div class="tg-tt" id="tg-piano-tt"></div>
+      <div class="tg-tt" id="tg-de-tt"></div>
       <div class="nhan-xet-box" id="tg-goiy-nghe" style="margin:0 0 10px;"></div>
       <div id="tg-cachang"></div>
       <div class="tg-ghichu" id="tg-ghichu-noisuy"></div>
@@ -441,13 +442,16 @@
         </select>
         <label for="tg-nen" data-i18n="tg_nen">Nền thiên nhiên</label>
         <select id="tg-nen" onchange="doiMixTG()">
-          <option value="wind" data-i18n="tg_nen_gio" selected>Gió rừng</option>
+          <option value="wind" data-i18n="tg_nen_gio">Gió rừng</option>
           <option value="rain" data-i18n="tg_nen_mua">Mưa</option>
-          <option value="both" data-i18n="tg_nen_ca2">Cả hai</option>
+          <option value="both" data-i18n="tg_nen_ca2" selected>Cả hai</option>
         </select>
         <label class="tg-chk"><input type="checkbox" id="tg-piano-bat" checked onchange="doiMixTG()"> <span data-i18n="tg_piano_bat">Bật tiếng piano</span></label>
         <label for="tg-vol-piano" data-i18n="tg_vol_piano">Âm lượng piano</label>
         <input type="range" id="tg-vol-piano" min="0" max="100" value="80" oninput="doiMixTG()">
+        <label class="tg-chk"><input type="checkbox" id="tg-de-bat" checked onchange="doiMixTG()"> <span data-i18n="tg_de_bat">Bật tiếng dế (nhiệt độ)</span></label>
+        <label for="tg-vol-de" data-i18n="tg_vol_de">Âm lượng tiếng dế</label>
+        <input type="range" id="tg-vol-de" min="0" max="100" value="80" oninput="doiMixTG()">
         <label for="tg-vol-nen" data-i18n="tg_vol_nen">Âm lượng thiên nhiên</label>
         <input type="range" id="tg-vol-nen" min="0" max="100" value="80" oninput="doiMixTG()">
       </details>
@@ -675,12 +679,12 @@ const TU_DIEN = {
     tg_doc_bat_gt: "🔊 Nghe đọc cả phần Giới thiệu",
     tg_doc_dung: "⏹ Dừng đọc",
     mucluc_tieude: "📖 Mục lục âm thanh",
-    mucluc_chung: "<b>🎵 Quy tắc chung cho cả 3 loại</b> (dùng thang Đô-Rê-Mi-Fa-Sol-La-Si-Đô, trải rộng hơn 2 quãng 8 để dễ phân biệt)<br>Mức <b>Cao</b> = quãng CAO (Đô5-Rê5-Mi5-Sol5), <b>vui nhộn</b>, đi lên, nhanh<br>Mức <b>Trung bình</b> = quãng GIỮA (Đô4-Rê4-Mi4-Fa4), vừa phải<br>Mức <b>Thấp</b> = quãng TRẦM (La3-Sol3-Fa3), <b>buồn nhẹ</b>, đi xuống, chậm",
+    mucluc_chung: "<b>🎵 Quy tắc chung</b>: mỗi loại số liệu có một loại âm riêng.<br>🌿 <b>Phủ xanh</b> dùng giai điệu 3 mức (thang Đô-Rê-Mi-Fa-Sol-La-Si-Đô, trải rộng hơn 2 quãng 8): mức <b>Cao</b> = quãng CAO (Đô5-Rê5-Mi5-Sol5), <b>vui nhộn</b>, đi lên, nhanh; mức <b>Trung bình</b> = quãng GIỮA (Đô4-Rê4-Mi4-Fa4), vừa phải; mức <b>Thấp</b> = quãng TRẦM (La3-Sol3-Fa3), <b>buồn nhẹ</b>, đi xuống, chậm.<br>🌡️ <b>Nhiệt độ</b> dùng tiếng <b>dế</b> và 🌧️ <b>lượng mưa</b> dùng tiếng <b>mưa thật</b>. Hai loại này dùng một thang chung cho mọi nơi trên Trái Đất.",
     mucluc_xanh: "<b>🌿 Phủ xanh</b> — âm tam giác, trong trẻo như lá cây. Rậm rạp nghe vui tươi, đất trống nghe buồn hơn.",
-    mucluc_nhiet: "<b>🌡️ Nhiệt độ</b> (dưới 15°C = Thấp, 15–25°C = Trung bình, trên 25°C = Cao) — âm tròn ấm áp.",
-    mucluc_mua: "<b>🌧️ Lượng mưa</b> (dưới 1mm/ngày = Thấp, 1–4mm/ngày = Trung bình, trên 4mm/ngày = Cao) — âm trầm hơn, nghe ẩm ướt như mưa. Mưa càng nhiều, càng nhiều tiếng \"tí tách\" phía sau.",
-    mucluc_tinhchinh: "<b>🔬 Tinh chỉnh theo số liệu thật</b> — trong CÙNG 1 mức, cao độ vẫn hơi khác nhau tuỳ giá trị NASA chính xác (không phải mọi nơi \"mức Cao\" nghe y hệt nhau), và âm sắc nhiệt độ chuyển dần liên tục theo °C thật.",
-    mucluc_bexuhuong: "<b>📈 Nốt bè xu hướng</b> — nếu nghe thêm 1 nốt bè nhẹ ngay sau giai điệu chính: bè CAO hơn nghĩa là số liệu này đang TĂNG so với lần đo/năm trước, bè THẤP hơn nghĩa là đang GIẢM. Không có nốt bè = gần như không đổi.",
+    mucluc_nhiet: "<b>🌡️ Nhiệt độ</b> (dưới 15°C = Thấp, 15–25°C = Trung bình, trên 25°C = Cao) — tiếng <b>dế</b>. Trời càng nóng, dế kêu càng nhanh: khoảng 0,7 tiếng mỗi giây ở 10°C, 1,9 ở 20°C, 3,1 ở 30°C. Dưới khoảng 4°C dế im lặng. Dế là động vật máu lạnh, trời ấm thì cơ co nhanh hơn nên kêu nhanh hơn. Người ta còn đoán nhiệt độ bằng cách đếm tiếng dế trong 15 giây rồi cộng 40 (ra độ F), gọi là định luật Dolbear. Công thức này chỉ gần đúng và hợp nhất với một số loài dế.",
+    mucluc_mua: "<b>🌧️ Lượng mưa</b> (dưới 1mm/ngày = Thấp, 1–4mm/ngày = Trung bình, trên 4mm/ngày = Cao) — tiếng <b>mưa thật</b>. Mưa càng nhiều thì tiếng mưa càng to, và từ khoảng 8 mm/ngày trở lên thì có cả tiếng sấm. Dùng một thang chung cho mọi nơi: gần như không mưa thì im, 25 mm/ngày trở lên là to nhất.",
+    mucluc_tinhchinh: "<b>🔬 Tinh chỉnh theo số liệu thật</b> — ở phủ xanh, trong CÙNG 1 mức, cao độ vẫn hơi khác nhau tuỳ giá trị NASA chính xác. Ở nhiệt độ và lượng mưa, âm thanh đổi liên tục theo °C và mm thật.",
+    mucluc_bexuhuong: "<b>📈 Nốt bè xu hướng (chỉ ở phủ xanh)</b> — nếu nghe thêm 1 nốt bè nhẹ ngay sau giai điệu chính: bè CAO hơn nghĩa là số liệu này đang TĂNG so với lần đo trước, bè THẤP hơn nghĩa là đang GIẢM. Không có nốt bè = gần như không đổi. Xu hướng của nhiệt độ và mưa được ghi bằng chữ ngay dưới nút Nghe.",
     mucluc_nut: "Đã hiểu, đóng lại",
     tn_tieude: "📍 Về nơi này",
     tn_diem: "Điểm NASA đo: {lat}, {lon}.",
@@ -689,14 +693,14 @@ const TU_DIEN = {
     tn_dong_n: "🌿 Phủ xanh (NDVI): {tu} → {den}, {nhan}",
     tn_dong_t: "🌡️ Nhiệt độ trung bình: {tu} → {den}, {nhan}",
     tn_dong_p: "🌧️ Lượng mưa trung bình: {tu} → {den}, {nhan}",
-    tn_amthanh: "🎧 Khi nghe: phủ xanh càng cao thì tiếng piano càng sôi động; trời càng nóng thì tiếng đàn càng sáng; mưa càng nhiều thì tiếng mưa càng to. Ở {ten}, đàn sôi động nhất vào {mn2} và êm nhất vào {mn1}; đàn sáng nhất vào {mt2}; tiếng mưa to nhất vào {mp2}. {qua20}",
+    tn_amthanh: "🎧 Khi nghe: phủ xanh càng cao thì tiếng piano càng sôi động; trời càng nóng thì dế kêu càng nhanh; mưa càng nhiều thì tiếng mưa càng to. Ở {ten}, đàn sôi động nhất vào {mn2} và êm nhất vào {mn1}; dế kêu nhanh nhất vào {mt2}; tiếng mưa to nhất vào {mp2}. {qua20}",
     tn_qua20_doi: "Qua 20 năm, âm thanh gần như không đổi nhiều. Bạn nghe thử xem có đúng không nhé!",
     tn_qua20: "Qua 20 năm, bạn sẽ nghe {ds}. Bạn nghe thử xem có đúng không nhé!",
     tn_luuy: "Đây là số đo ở một điểm, nên chỉ nói về điểm này.",
     tn_luuy_ndvi: "Ở đây nhiều lần vệ tinh không nhìn rõ mặt đất (mây, bụi, tuyết...) nên hơn một nửa số tháng NDVI phải ước lượng (vùng xám), vì vậy xu hướng phủ xanh chỉ để tham khảo.",
     tg_c1_tieude: "📅 Khoảng thời gian",
     tg_c3_tieude: "☁️ Khi có mây",
-    tg_nguon: "Nguồn: NASA POWER (nhiệt độ, mưa, gió) và NASA MODIS qua ORNL DAAC (NDVI). Số liệu theo tháng. Âm thanh: nhạc piano, tiếng mưa và tiếng gió rừng từ Pixabay (Pixabay Content License).",
+    tg_nguon: "Nguồn: NASA POWER (nhiệt độ, mưa, gió) và NASA MODIS qua ORNL DAAC (NDVI). Số liệu theo tháng. Âm thanh: nhạc piano và tiếng gió rừng từ Pixabay (Pixabay Content License); tiếng mưa và tiếng dế do nhóm cung cấp.",
     tg_dangchuanbi: "⏳ Đang chuẩn bị...",
     tg_tatam: "🔇 Tắt tiếng",
     tg_batam: "🔊 Bật tiếng",
@@ -710,6 +714,12 @@ const TU_DIEN = {
     tg_nen_mua: "Mưa",
     tg_nen_ca2: "Cả hai",
     tg_piano_bat: "Bật tiếng piano",
+    tg_de_bat: "Bật tiếng dế (nhiệt độ)",
+    tg_vol_de: "Âm lượng tiếng dế",
+    tg_de_tt: "🦗 Dế kêu {r} tiếng mỗi giây (ở {t} °C)",
+    tg_de_im: "🦗 Trời lạnh quá, dế im lặng",
+    nghe_de_im: " · 🦗 dế im lặng (dưới ~4 °C)",
+    nghe_mua_kho: " · 🌧️ gần như không mưa, nên im",
     tg_vol_piano: "Âm lượng piano",
     tg_vol_nen: "Âm lượng thiên nhiên",
 
@@ -780,7 +790,7 @@ const TU_DIEN = {
     huongdan_1_tieude: "1. 🌍 Khám phá",
     huongdan_1_noidung: "Bấm Bắt đầu khám phá, rồi chọn 1 trong 2 cách: ⏳ khám phá theo thời gian (mới) hoặc 📍 khám phá theo địa điểm.",
     huongdan_tg_tieude: "2. ⏳ Khám phá theo thời gian (mới)",
-    huongdan_tg_noidung: "Chọn 1 trong 6 nơi (Diên An / An Tái, Rondônia, Hà Nội, Cần Thơ, Phoenix, New York). Bấm ▶ Phát hoặc kéo thanh thời gian để nghe hơn 20 năm số liệu NASA trôi qua: tiếng piano đổi theo độ xanh của mặt đất, đàn sáng hơn khi trời nóng, tiếng mưa và gió to lên khi mưa gió mạnh. Mở thẻ 📖 Giới thiệu và 📍 Về nơi này để đọc thêm. Vùng xám trên biểu đồ là những tháng vệ tinh không nhìn rõ nên phải ước lượng. Nút 🇻🇳 VI / 🇬🇧 EN ở góc trên để đổi ngôn ngữ.",
+    huongdan_tg_noidung: "Chọn 1 trong 6 nơi (Diên An / An Tái, Rondônia, Hà Nội, Cần Thơ, Phoenix, New York). Bấm ▶ Phát hoặc kéo thanh thời gian để nghe hơn 20 năm số liệu NASA trôi qua: tiếng piano đổi theo độ xanh của mặt đất, dế kêu nhanh hơn khi trời nóng, tiếng mưa và gió to lên khi mưa gió mạnh. Mở thẻ 📖 Giới thiệu và 📍 Về nơi này để đọc thêm. Vùng xám trên biểu đồ là những tháng vệ tinh không nhìn rõ nên phải ước lượng. Nút 🇻🇳 VI / 🇬🇧 EN ở góc trên để đổi ngôn ngữ.",
     huongdan_loc_tieude: "3. 📍 Khám phá theo địa điểm",
     huongdan_loc_noidung: "Chọn 1 trong 25 nơi trên Trái Đất (thành phố, rừng, sa mạc...) mà em muốn tìm hiểu, rồi đi tiếp các bước 4 đến 9 bên dưới.",
     huongdan_do_tieude: "5. 🖼️ Nghe âm đoán hình (không bắt buộc)",
@@ -887,12 +897,12 @@ const TU_DIEN = {
     tg_doc_bat_gt: "🔊 Read the whole Introduction",
     tg_doc_dung: "⏹ Stop reading",
     mucluc_tieude: "📖 Sound guide",
-    mucluc_chung: "<b>🎵 General rules for all 3 types</b> (uses the scale C-D-E-F-G-A-B-C, spread over more than 2 octaves so the levels are easy to tell apart)<br><b>High</b> level = HIGH range (C5-D5-E5-G5), <b>cheerful</b>, rising, fast<br><b>Medium</b> level = MIDDLE range (C4-D4-E4-F4), moderate<br><b>Low</b> level = LOW range (A3-G3-F3), <b>gently sad</b>, falling, slow",
+    mucluc_chung: "<b>🎵 General rules</b>: each kind of data has its own kind of sound.<br>🌿 <b>Vegetation</b> uses a 3-level melody (the scale C-D-E-F-G-A-B-C, spread over more than 2 octaves): <b>High</b> level = HIGH range (C5-D5-E5-G5), <b>cheerful</b>, rising, fast; <b>Medium</b> level = MIDDLE range (C4-D4-E4-F4), moderate; <b>Low</b> level = LOW range (A3-G3-F3), <b>gently sad</b>, falling, slow.<br>🌡️ <b>Temperature</b> uses <b>cricket</b> chirps and 🌧️ <b>rainfall</b> uses a <b>real rain</b> recording. These two use one shared scale for every place on Earth.",
     mucluc_xanh: "<b>🌿 Vegetation</b> — a triangle wave, clear like leaves. Dense greenery sounds cheerful, bare ground sounds sadder.",
-    mucluc_nhiet: "<b>🌡️ Temperature</b> (below 15°C = Low, 15–25°C = Medium, above 25°C = High) — a round, warm tone.",
-    mucluc_mua: "<b>🌧️ Rainfall</b> (below 1mm/day = Low, 1–4mm/day = Medium, above 4mm/day = High) — a deeper tone that sounds damp like rain. The more it rains, the more \"pitter-patter\" you hear behind it.",
-    mucluc_tinhchinh: "<b>🔬 Fine-tuned by real data</b> — within the SAME level, the pitch still differs a little depending on the exact NASA value (not every \"High\" place sounds identical), and the temperature tone brightens smoothly with the real °C.",
-    mucluc_bexuhuong: "<b>📈 Trend harmony note</b> — if you hear one soft extra note right after the main melody: a HIGHER note means this value is RISING compared with the last reading/year, a LOWER note means it is FALLING. No extra note = almost unchanged.",
+    mucluc_nhiet: "<b>🌡️ Temperature</b> (below 15°C = Low, 15–25°C = Medium, above 25°C = High) — <b>cricket</b> chirps. The hotter it is, the faster crickets chirp: about 0.7 chirps per second at 10°C, 1.9 at 20°C, 3.1 at 30°C. Below about 4°C the crickets go silent. Crickets are cold-blooded, so in warmer air their muscles work faster and they chirp faster. People even estimate the temperature by counting chirps for 15 seconds and adding 40 (giving °F), known as Dolbear's law. It is only approximate and works best for certain cricket species.",
+    mucluc_mua: "<b>🌧️ Rainfall</b> (below 1mm/day = Low, 1–4mm/day = Medium, above 4mm/day = High) — a <b>real rain</b> recording. The more it rains, the louder the rain, and from about 8 mm/day up you also hear thunder. One shared scale for every place: almost no rain is silent, 25 mm/day or more is loudest.",
+    mucluc_tinhchinh: "<b>🔬 Fine-tuned by real data</b> — for vegetation, within the SAME level, the pitch still differs a little depending on the exact NASA value. For temperature and rainfall, the sound changes smoothly with the real °C and mm.",
+    mucluc_bexuhuong: "<b>📈 Trend harmony note (vegetation only)</b> — if you hear one soft extra note right after the main melody: a HIGHER note means this value is RISING compared with the last reading, a LOWER note means it is FALLING. No extra note = almost unchanged. The trend for temperature and rainfall is written in words under the Listen button.",
     mucluc_nut: "Got it, close",
     tn_tieude: "📍 About this place",
     tn_diem: "NASA measuring point: {lat}, {lon}.",
@@ -901,14 +911,14 @@ const TU_DIEN = {
     tn_dong_n: "🌿 Greenness (NDVI): {tu} → {den}, {nhan}",
     tn_dong_t: "🌡️ Average temperature: {tu} → {den}, {nhan}",
     tn_dong_p: "🌧️ Average rainfall: {tu} → {den}, {nhan}",
-    tn_amthanh: "🎧 When you listen: the greener it is, the livelier the piano; the hotter it is, the brighter the piano; the more it rains, the louder the rain. In {ten}, the piano is liveliest in {mn2} and calmest in {mn1}; brightest in {mt2}; the rain is loudest in {mp2}. {qua20}",
+    tn_amthanh: "🎧 When you listen: the greener it is, the livelier the piano; the hotter it is, the faster the crickets chirp; the more it rains, the louder the rain. In {ten}, the piano is liveliest in {mn2} and calmest in {mn1}; the crickets chirp fastest in {mt2}; the rain is loudest in {mp2}. {qua20}",
     tn_qua20_doi: "Over 20 years the sound hardly changes. Listen and see if you agree!",
     tn_qua20: "Over 20 years you will hear {ds}. Listen and see if you agree!",
     tn_luuy: "This is a measurement at a single point, so it only tells us about this point.",
     tn_luuy_ndvi: "Satellites often can't see the ground clearly here (cloud, dust, snow...), so more than half of the NDVI months are estimates (grey zone). Treat the greenness trend as a rough guide only.",
     tg_c1_tieude: "📅 Time span",
     tg_c3_tieude: "☁️ When it's cloudy",
-    tg_nguon: "Sources: NASA POWER (temperature, rainfall, wind) and NASA MODIS via ORNL DAAC (NDVI). Monthly values. Sounds: piano music, rain and forest wind from Pixabay (Pixabay Content License).",
+    tg_nguon: "Sources: NASA POWER (temperature, rainfall, wind) and NASA MODIS via ORNL DAAC (NDVI). Monthly values. Sounds: piano music and forest wind from Pixabay (Pixabay Content License); rain and cricket sounds provided by the team.",
     tg_dangchuanbi: "⏳ Getting ready...",
     tg_tatam: "🔇 Mute",
     tg_batam: "🔊 Unmute",
@@ -922,6 +932,12 @@ const TU_DIEN = {
     tg_nen_mua: "Rain",
     tg_nen_ca2: "Both",
     tg_piano_bat: "Piano on",
+    tg_de_bat: "Crickets on (temperature)",
+    tg_vol_de: "Cricket volume",
+    tg_de_tt: "🦗 Crickets chirp {r} times per second (at {t} °C)",
+    tg_de_im: "🦗 Too cold, the crickets are silent",
+    nghe_de_im: " · 🦗 crickets silent (below ~4 °C)",
+    nghe_mua_kho: " · 🌧️ almost no rain, so it is silent",
     tg_vol_piano: "Piano volume",
     tg_vol_nen: "Nature volume",
 
@@ -992,7 +1008,7 @@ const TU_DIEN = {
     huongdan_1_tieude: "1. 🌍 Explore",
     huongdan_1_noidung: "Tap Start Exploring, then pick one of 2 ways: ⏳ explore through time (new) or 📍 explore by place.",
     huongdan_tg_tieude: "2. ⏳ Explore Through Time (new)",
-    huongdan_tg_noidung: "Pick one of 6 places (Yan'an / Ansai, Rondônia, Hanoi, Can Tho, Phoenix, New York). Tap ▶ Play or drag the time bar to hear more than 20 years of NASA data go by: the piano changes with how green the ground is, gets brighter when it's hot, and the rain and wind get louder when they get stronger. Open the 📖 Introduction and 📍 About this place cards to read more. The grey zone on the chart marks months the satellite couldn't see clearly, so they are estimated. Use the 🇻🇳 VI / 🇬🇧 EN button at the top to change language.",
+    huongdan_tg_noidung: "Pick one of 6 places (Yan'an / Ansai, Rondônia, Hanoi, Can Tho, Phoenix, New York). Tap ▶ Play or drag the time bar to hear more than 20 years of NASA data go by: the piano changes with how green the ground is, the crickets chirp faster when it's hot, and the rain and wind get louder when they get stronger. Open the 📖 Introduction and 📍 About this place cards to read more. The grey zone on the chart marks months the satellite couldn't see clearly, so they are estimated. Use the 🇻🇳 VI / 🇬🇧 EN button at the top to change language.",
     huongdan_loc_tieude: "3. 📍 Explore by Place",
     huongdan_loc_noidung: "Pick one of 25 spots on Earth (a city, forest, desert...) you want to learn about, then follow steps 4 to 9 below.",
     huongdan_do_tieude: "5. 🖼️ Listen and Guess the Picture (optional)",
@@ -1380,7 +1396,7 @@ function phatAmPhuXanh(mucDo, ndvi, ndviTruoc) {
   phatGiaiDieuTheoMuc(mucDo, "triangle", 1600, lech);
   phatNotBeXuHuong(GIAI_DIEU_THEO_MUC[mucDo].not[0], huongThayDoi(ndvi, ndviTruoc, NGUONG_XU_HUONG.phuxanh), 1600);
 }
-function phatAmNhietDo(mucDo, tempC, tempCNamTruoc) {
+function phatAmNhietDoCu(mucDo, tempC, tempCNamTruoc) {  // bản giai điệu cũ: chỉ còn dùng khi không tải được âm thanh mới
   const dai = BIEN_MUC.nhietdo[mucDo];
   const lech = tempC == null ? 0 : lechCentTuViTri(viTriTrongDai(tempC, dai[0], dai[1]));
   // Âm sắc (độ sáng/tối của bộ lọc) cũng chuyển LIÊN TỤC theo nhiệt độ thật,
@@ -1389,13 +1405,60 @@ function phatAmNhietDo(mucDo, tempC, tempCNamTruoc) {
   phatGiaiDieuTheoMuc(mucDo, "sine", locTanSo, lech);
   phatNotBeXuHuong(GIAI_DIEU_THEO_MUC[mucDo].not[0], huongThayDoi(tempC, tempCNamTruoc, NGUONG_XU_HUONG.nhietdo), locTanSo);
 }
-function phatAmMua(mucDo, rainMmNgay, rainMmNgayNamTruoc) { // lọc thấp hơn = nghe trầm/ẩm như mưa
+function phatAmMuaCu(mucDo, rainMmNgay, rainMmNgayNamTruoc) {  // bản giai điệu cũ: chỉ còn dùng khi không tải được âm thanh mới // lọc thấp hơn = nghe trầm/ẩm như mưa
   const dai = BIEN_MUC.mua[mucDo];
   const lech = rainMmNgay == null ? 0 : lechCentTuViTri(viTriTrongDai(rainMmNgay, dai[0], dai[1]));
   phatGiaiDieuTheoMuc(mucDo, "sine", 900, lech);
   phatNotBeXuHuong(GIAI_DIEU_THEO_MUC[mucDo].not[0], huongThayDoi(rainMmNgay, rainMmNgayNamTruoc, NGUONG_XU_HUONG.mua), 900);
   if (rainMmNgay == null) return;
   phatHatMuaTheoLuong(rainMmNgay);
+}
+
+// ---------- LUỒNG THEO ĐỊA ĐIỂM: nhiệt độ = tiếng dế, mưa = tiếng mưa thật ----------
+// Cùng thang chung với màn thời gian (tocDoDeTuNhiet, heSoMua). Mỗi lần bấm Nghe phát khoảng 4,5 giây.
+// Âm thanh nạp một lần khi vào màn Lắng nghe (khoảng 3,4 MB); nếu nạp lỗi thì tự dùng giai điệu cũ.
+const DD = { tai: null, bo: null, ctx: null, out: null, deTT: { cuoi: -1 }, dai: 4.5 };
+function taiAmThanhDiaDiem() {
+  if (DD.tai) return DD.tai;
+  const ctx = layAudioContext();
+  DD.tai = layBytesMoi().then(function (kq) {
+    return Promise.all([giaiMaAmThanhTG(ctx, kq.mua), giaiMaAmThanhTG(ctx, kq.sam), giaiMaAmThanhTG(ctx, kq.de)]).then(function (b) {
+      DD.bo = { mua: b[0], sam: b[1], de: b[2], dsDe: kq.dsDe, dsSam: kq.dsSam }; return DD.bo;
+    });
+  }).catch(function (loi) { console.error(loi); DD.tai = null; throw loi; });
+  return DD.tai;
+}
+function ddDauRa(ctx) { // một đường ra chung: gain -> bộ nén -> loa (chống vỡ tiếng khi bấm nhiều lần)
+  if (DD.ctx !== ctx) {
+    DD.ctx = ctx; DD.out = ctx.createGain(); DD.out.gain.value = 0.7;
+    const nen = ctx.createDynamicsCompressor(); nen.threshold.value = -10; nen.knee.value = 12; nen.ratio.value = 5; nen.attack.value = 0.005; nen.release.value = 0.25;
+    DD.out.connect(nen); nen.connect(ctx.destination);
+  }
+  return DD.out;
+}
+function phatAmNhietDo(mucDo, tempC, tempCNamTruoc) {
+  if (tempC == null) return;
+  const ctx = layAudioContext(); if (ctx.state === "suspended" && ctx.resume) ctx.resume();
+  taiAmThanhDiaDiem().then(function (bo) {
+    const dich = ddDauRa(layAudioContext()), c = layAudioContext(), t0 = c.currentTime + 0.05, r = tocDoDeTuNhiet(tempC);
+    if (r < 0.02) return;                         // dưới ~4,4 °C dế im (màn Lắng nghe có ghi chú chữ)
+    const n = Math.max(1, Math.round(r * DD.dai)), buoc = (DD.dai - 0.7) / n;
+    for (let i = 0; i < n; i++) phatMotTiengDe(c, dich, bo.de, bo.dsDe, t0 + 0.1 + i * buoc + Math.random() * buoc * 0.5, 0.9, DD.deTT);
+  }).catch(function () { phatAmNhietDoCu(mucDo, tempC, tempCNamTruoc); });
+}
+function phatAmMua(mucDo, rainMmNgay, rainMmNgayNamTruoc) {
+  if (rainMmNgay == null) return;
+  const ctx = layAudioContext(); if (ctx.state === "suspended" && ctx.resume) ctx.resume();
+  taiAmThanhDiaDiem().then(function (bo) {
+    const c = layAudioContext(), dich = ddDauRa(c), hs = heSoMua(rainMmNgay), t0 = c.currentTime + 0.05, D = DD.dai;
+    if (hs === 0) return;                         // gần như không mưa: im (màn Lắng nghe có ghi chú chữ)
+    const s = c.createBufferSource(), g = c.createGain();
+    s.buffer = bo.mua; s.loop = true; s.connect(g); g.connect(dich);
+    g.gain.setValueAtTime(0.0001, t0); g.gain.linearRampToValueAtTime(hs, t0 + 0.4); g.gain.setValueAtTime(hs, t0 + D - 0.7); g.gain.linearRampToValueAtTime(0.0001, t0 + D);
+    s.start(t0, Math.random() * Math.max(0, bo.mua.duration - D - 1)); s.stop(t0 + D + 0.1);
+    s.onended = function () { try { g.disconnect(); } catch (e) { /* bỏ qua */ } };
+    if (nhipSamMoiPhut(rainMmNgay) > 0) phatMotTiengSam(c, dich, bo.sam, bo.dsSam, t0 + 0.8, 0.5 + 0.5 * Math.min(1, (rainMmNgay - 8) / 17));
+  }).catch(function () { phatAmMuaCu(mucDo, rainMmNgay, rainMmNgayNamTruoc); });
 }
 // Thêm các tiếng "tí tách" nhỏ sau giai điệu chính, SỐ LƯỢNG tỉ lệ thuận
 // với lượng mưa thật -- mưa càng nhiều, tiếng giọt rơi càng rộn ràng. Đây
@@ -1692,6 +1755,7 @@ function moManNghe(id) {
   document.getElementById("nut-toi-ve").disabled = true;
   hienThiKhungHinhEIC(kv, duLieuDaTai[id]);
   capNhatNutThoiGian(id);
+  taiAmThanhDiaDiem().catch(function () { /* nạp lỗi: nút Nghe sẽ dùng giai điệu cũ */ });
   hienManHinh("man-nghe");
 }
 function chuXuHuong(huong) {
@@ -1710,12 +1774,12 @@ function xuLyNghe(loai) {
     const mucDo = phanLoaiNhietDo(d.tempC);
     phatAmNhietDo(mucDo, d.tempC, d.tempCNamTruoc);
     document.getElementById("trang-thai-nhietdo").textContent = T("nghe_muc") + nhanMucDo(mucDo) +
-      chuXuHuong(huongThayDoi(d.tempC, d.tempCNamTruoc, NGUONG_XU_HUONG.nhietdo));
+      chuXuHuong(huongThayDoi(d.tempC, d.tempCNamTruoc, NGUONG_XU_HUONG.nhietdo)) + (tocDoDeTuNhiet(d.tempC) < 0.02 ? T("nghe_de_im") : "");
   } else {
     const mucDo = phanLoaiMua(d.rainMmNgay);
     phatAmMua(mucDo, d.rainMmNgay, d.rainMmNgayNamTruoc);
     document.getElementById("trang-thai-mua").textContent = T("nghe_muc") + nhanMucDo(mucDo) +
-      chuXuHuong(huongThayDoi(d.rainMmNgay, d.rainMmNgayNamTruoc, NGUONG_XU_HUONG.mua));
+      chuXuHuong(huongThayDoi(d.rainMmNgay, d.rainMmNgayNamTruoc, NGUONG_XU_HUONG.mua)) + (heSoMua(d.rainMmNgay) === 0 ? T("nghe_mua_kho") : "");
   }
   document.getElementById("nut-toi-ve").disabled = false;
 }
@@ -2147,10 +2211,10 @@ const NARRATION = {
         en: "Drag the time bar, or press Play. You'll hear more than 20 years go by in just a few minutes. The sounds change with real NASA data." },
   B1: { audio: null, vi: "Dải thứ nhất là NDVI. Đây là con số cho biết mặt đất xanh đến đâu, khi nhìn từ vệ tinh. Số từ 0 đến 1, càng gần 1 thì cây cối càng xanh tốt. Con số này không đếm cây, mà đo độ xanh.",
         en: "The first strip is NDVI. It's a number that tells how green the ground looks from a satellite. It goes from 0 to 1: the closer to 1, the greener and healthier the plants. It doesn't count trees; it measures how green things are." },
-  B2: { audio: null, vi: "Dải thứ hai là nhiệt độ. Đó là độ nóng của không khí, cách mặt đất khoảng 2 mét. NASA tính cho từng tháng. Trời càng nóng thì tiếng đàn càng sáng.",
-        en: "The second strip is temperature: how warm the air is, about 2 meters above the ground. NASA works it out for each month. The hotter it is, the brighter the piano sounds." },
-  B3: { audio: null, vi: "Dải thứ ba là lượng mưa. NASA tính mỗi ngày mưa được bao nhiêu mi-li-mét (mm), rồi lấy trung bình cho cả tháng. 1 mm nghĩa là 1 lít nước rơi trên 1 mét vuông đất. Mưa càng nhiều thì tiếng mưa càng to.",
-        en: "The third strip is rainfall. NASA works out how many millimeters (mm) of rain fall each day, then averages it for the whole month. 1 mm means 1 liter of water falling on 1 square meter of ground. The more it rains, the louder the rain sounds." },
+  B2: { audio: null, vi: "Dải thứ hai là nhiệt độ. Đó là độ nóng của không khí, cách mặt đất khoảng 2 mét. NASA tính cho từng tháng. Trời càng nóng thì tiếng dế kêu càng nhanh. Dế là động vật máu lạnh: trời ấm thì dế kêu nhanh hơn, dưới khoảng 4 độ C thì dế im.",
+        en: "The second strip is temperature: how warm the air is, about 2 meters above the ground. NASA works it out for each month. The hotter it is, the faster the crickets chirp. Crickets are cold-blooded: warmer air makes them chirp faster, and below about 4 degrees Celsius they go quiet." },
+  B3: { audio: null, vi: "Dải thứ ba là lượng mưa. NASA tính mỗi ngày mưa được bao nhiêu mi-li-mét (mm), rồi lấy trung bình cho cả tháng. 1 mm nghĩa là 1 lít nước rơi trên 1 mét vuông đất. Mưa càng nhiều thì tiếng mưa càng to, và mưa rất to thì có cả tiếng sấm.",
+        en: "The third strip is rainfall. NASA works out how many millimeters (mm) of rain fall each day, then averages it for the whole month. 1 mm means 1 liter of water falling on 1 square meter of ground. The more it rains, the louder the rain sounds, and very heavy rain brings thunder too." },
   B4: { audio: null, vi: "Dải thứ tư là tốc độ gió, đo ở độ cao khoảng 2 mét. Đơn vị là mét trên giây (m/s). Gió càng mạnh thì tiếng gió trong rừng càng to.",
         en: "The fourth strip is wind speed, about 2 meters above the ground, in meters per second (m/s). The stronger the wind, the louder the forest wind sounds." },
   C1: { audio: null, vi: "Số liệu đi từ {a} đến {b}. Mỗi tháng là một điểm trên đường thời gian.",
@@ -2212,8 +2276,8 @@ const TG_MUC_TU = {
   P: { vi: ["mưa nhiều hơn khá rõ", "mưa nhiều hơn nhẹ", "gần như không đổi", "mưa ít đi nhẹ", "mưa ít đi khá rõ"], en: ["clearly wetter", "slightly wetter", "almost unchanged", "slightly drier", "clearly drier"] }
 };
 // Từ nói về ÂM THANH sau 20 năm, cùng thứ tự: tăng (nghe thấy gì), giảm.
-const TG_AM_TANG = { N: ["đàn những năm gần đây sôi động hơn", "đàn những năm gần đây êm hơn"], T: ["tiếng đàn sáng hơn", "tiếng đàn trầm hơn"], P: ["tiếng mưa to hơn", "tiếng mưa nhỏ hơn"] };
-const TG_AM_TANG_EN = { N: ["the piano livelier in recent years", "the piano calmer in recent years"], T: ["a brighter piano", "a duller piano"], P: ["louder rain", "softer rain"] };
+const TG_AM_TANG = { N: ["đàn những năm gần đây sôi động hơn", "đàn những năm gần đây êm hơn"], T: ["tiếng dế kêu nhanh hơn", "tiếng dế kêu chậm hơn"], P: ["tiếng mưa to hơn", "tiếng mưa nhỏ hơn"] };
+const TG_AM_TANG_EN = { N: ["the piano livelier in recent years", "the piano calmer in recent years"], T: ["faster cricket chirps", "slower cricket chirps"], P: ["louder rain", "softer rain"] };
 function phanTichNoiTG(c) { // tính toàn bộ từ chuỗi số liệu thật; chỉ dùng các năm đủ 12 tháng
   const y0 = parseInt(c.start.slice(0, 4), 10), m0 = parseInt(c.start.slice(5, 7), 10);
   const i0 = (12 - (m0 - 1)) % 12, soNam = Math.floor((c.n - i0) / 12), nam0 = y0 + (i0 ? 1 : 0);
@@ -2605,12 +2669,62 @@ function doiTocDoThoiGian() {
 // ---- Âm thanh của màn này (S3). Dùng chung AudioContext của app nhưng có chuỗi nút riêng (master + compressor),
 // không đụng tới phatMotNotLofi() và các âm thanh cũ. Ánh xạ giữ đúng như bản thử "Hà Nội 20 năm":
 // NDVI -> chọn đoạn piano; nhiệt độ -> độ sáng tiếng đàn; mưa -> độ to tiếng mưa; gió -> độ to tiếng gió.
-const DUONG_AM_THANH = { piano: "assets/audio/piano.mp3", mua: "assets/audio/rain-loop.wav", gio: "assets/audio/wind-loop-B.wav" };
+// ---------- MƯA + DẾ: MỘT THANG CHUNG cho mọi địa điểm, dùng ở CẢ HAI luồng (theo thời gian và theo địa điểm) ----------
+// Không chuẩn hóa theo từng nơi: cùng một con số (mm/ngày, °C) luôn nghe giống nhau ở mọi nơi trên Trái Đất.
+const AM_MOI = {
+  mua: "assets/audio/rain-loop-v2.wav",      // vòng mưa 40 s, cắt từ đoạn mưa đều (không sấm) của "Rain and Thumb", nối mượt
+  sam: "assets/audio/thunder.wav", samDs: "data/thunder-clips.json",   // 4 clip sấm cắt từ cùng file
+  de: "assets/audio/cricket-chirps.wav", deDs: "data/cricket-chirps.json"  // ngân hàng từng tiếng dế kêu rời, tách từ bản thu thật
+};
+// Dế: định luật Dolbear (1897) cho dế cây tuyết: nhiệt độ °F ≈ số tiếng kêu trong 15 giây + 40. Dưới 40 °F (~4,4 °C) dế im.
+function tocDoDeTuNhiet(tC) { return Math.max(0, (1.8 * tC + 32 - 40) / 15); }        // tiếng kêu mỗi giây
+// Mưa: 0 mm/ngày = im; mức to tăng theo log từ -30 dB (rất nhẹ) đến 0 dB (từ 25 mm/ngày trở lên), cộng 4 dB bù vì vòng mưa đã được làm đều (nhỏ hơn bản gốc).
+function mucMuaDB(mm) { return mm >= 0.05 ? -30 + 30 * Math.min(1, Math.log(1 + 2 * mm) / Math.log(51)) : -Infinity; }
+function heSoMua(mm) { const db = mucMuaDB(mm); return db === -Infinity ? 0 : 1.6 * Math.pow(10, db / 20); }
+// Sấm: chỉ từ 8 mm/ngày trở lên; càng mưa to càng hay có (0,5 đến 3,5 tiếng sấm mỗi phút khi chạy dài).
+function nhipSamMoiPhut(mm) { return mm >= 8 ? 0.5 + 3 * Math.min(1, (mm - 8) / 17) : 0; }
+function dsClipHopLe(a, toiThieu) {
+  return Array.isArray(a) && a.length >= toiThieu && a.every(function (c) { return Array.isArray(c) && isFinite(c[0]) && isFinite(c[1]) && c[1] > c[0] && c[0] >= 0; });
+}
+// Tải CHUNG một lần cho cả hai luồng: vòng mưa, clip sấm, tiếng dế (byte chưa giải mã) và hai danh sách clip. Lỗi thì lần sau tải lại được.
+const KHO_MOI = { hua: null };
+function layBytesMoi() {
+  if (KHO_MOI.hua) return KHO_MOI.hua;
+  const layBuf = function (url) { return fetch(url).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status + " " + url); return r.arrayBuffer(); }); };
+  const layJson = function (url) { return fetch(url).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status + " " + url); return r.json(); }); };
+  KHO_MOI.hua = Promise.all([layBuf(AM_MOI.mua), layBuf(AM_MOI.sam), layBuf(AM_MOI.de), layJson(AM_MOI.deDs), layJson(AM_MOI.samDs)]).then(function (kq) {
+    if (!dsClipHopLe(kq[3], 8)) throw new Error("Danh sách tiếng dế không hợp lệ");
+    if (!dsClipHopLe(kq[4], 1)) throw new Error("Danh sách tiếng sấm không hợp lệ");
+    return { mua: kq[0], sam: kq[1], de: kq[2], dsDe: kq[3], dsSam: kq[4] };
+  }).catch(function (loi) { KHO_MOI.hua = null; throw loi; });
+  return KHO_MOI.hua;
+}
+// Phát 1 tiếng dế (chọn ngẫu nhiên 1 trong ngân hàng, không lặp liên tiếp) tại thời điểm t.
+function phatMotTiengDe(ctx, dich, buf, ds, t, doTo, trangThai) {
+  let i = Math.floor(Math.random() * ds.length);
+  if (ds.length > 1 && i === trangThai.cuoi) i = (i + 1 + Math.floor(Math.random() * (ds.length - 1))) % ds.length;
+  trangThai.cuoi = i;
+  const c = ds[i], s = ctx.createBufferSource(), g = ctx.createGain();
+  s.buffer = buf; g.gain.value = doTo * (0.8 + 0.2 * Math.random());
+  let nut = g;
+  if (ctx.createStereoPanner) { const p = ctx.createStereoPanner(); p.pan.value = (Math.random() - 0.5) * 0.6; g.connect(p); nut = p; }
+  s.connect(g); nut.connect(dich); s.start(t, c[0], c[1] - c[0]);
+  s.onended = function () { try { g.disconnect(); if (nut !== g) nut.disconnect(); } catch (e) { /* bỏ qua */ } };
+}
+// Phát 1 tiếng sấm (ngẫu nhiên 1 trong các clip) tại thời điểm t.
+function phatMotTiengSam(ctx, dich, buf, ds, t, doTo) {
+  const c = ds[Math.floor(Math.random() * ds.length)], s = ctx.createBufferSource(), g = ctx.createGain();
+  s.buffer = buf; g.gain.value = doTo; s.connect(g); g.connect(dich); s.start(t, c[0], c[1] - c[0]);
+  s.onended = function () { try { g.disconnect(); } catch (e) { /* bỏ qua */ } };
+}
+
+const DUONG_AM_THANH = { piano: "assets/audio/piano.mp3", mua: AM_MOI.mua, gio: "assets/audio/wind-loop-B.wav", sam: AM_MOI.sam, de: AM_MOI.de };
 const DUONG_DOAN_PIANO = "data/piano-slices.json";
 const DO_LECH_PIANO = 0; // giây. Đo được 0 ms ở Chromium; Safari chưa kiểm.
-const AT = { bytes: null, doan: null, dangTai: null, tt: "", ctx: null, do: null, buf: null, nguonMua: null, nguonGio: null,
+const AT = { bytes: null, doan: null, dsDe: null, dsSam: null, dangTai: null, tt: "", ctx: null, do: null, buf: null, nguonMua: null, nguonGio: null,
   hen: null, henMuc: null, tiepTheo: 0, lichSu: [], hienThi: [], pianoTT: null, dangBat: false,
-  tat: false, nen: "wind", pianoBat: true, volPiano: 0.8, volNen: 0.8 };
+  deTiep: 0, deUltim: 0, deTT: { cuoi: -1 }, samCuoi: 0, deDong: "",
+  tat: false, nen: "both", pianoBat: true, volPiano: 0.8, volNen: 0.8, deBat: true, volDe: 0.8 };
 
 function doanPianoHopLeTG(a) {
   return Array.isArray(a) && a.length >= 8 && a.every(function (s) {
@@ -2618,18 +2732,18 @@ function doanPianoHopLeTG(a) {
   });
 }
 function taiByteAmThanhTG() { // chỉ TẢI file (chưa giải mã, chưa cần người chơi bấm); lỗi thì lần sau tải lại được
-  if (AT.bytes && AT.doan) return Promise.resolve();
+  if (AT.bytes && AT.doan && AT.dsDe && AT.dsSam) return Promise.resolve();
   if (AT.dangTai) return AT.dangTai;
   AT.tt = "dangtai"; capNhatTTAmThanhTG();
   const layBuf = function (url) {
     return fetch(url).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status + " " + url); return r.arrayBuffer(); });
   };
   AT.dangTai = Promise.all([
-    layBuf(DUONG_AM_THANH.piano), layBuf(DUONG_AM_THANH.mua), layBuf(DUONG_AM_THANH.gio),
-    fetch(DUONG_DOAN_PIANO).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status + " " + DUONG_DOAN_PIANO); return r.json(); })
+    layBuf(DUONG_AM_THANH.piano), layBuf(DUONG_AM_THANH.gio), fetch(DUONG_DOAN_PIANO).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status + " " + DUONG_DOAN_PIANO); return r.json(); }),
+    layBytesMoi()
   ]).then(function (kq) {
-    if (!doanPianoHopLeTG(kq[3])) throw new Error("Danh sách đoạn piano không hợp lệ");
-    AT.bytes = { piano: kq[0], mua: kq[1], gio: kq[2] }; AT.doan = kq[3]; AT.tt = "sansang";
+    if (!doanPianoHopLeTG(kq[2])) throw new Error("Danh sách đoạn piano không hợp lệ");
+    AT.bytes = { piano: kq[0], gio: kq[1], mua: kq[3].mua, sam: kq[3].sam, de: kq[3].de }; AT.doan = kq[2]; AT.dsDe = kq[3].dsDe; AT.dsSam = kq[3].dsSam; AT.tt = "sansang";
   }).catch(function (loi) {
     console.error(loi); AT.tt = "loi"; throw loi;
   }).finally(function () { AT.dangTai = null; capNhatTTAmThanhTG(); });
@@ -2644,13 +2758,15 @@ function giaiMaAmThanhTG(ctx, ab) { // tương thích Safari cũ (callback) và 
 function dungDoThiAmThanhTG(ctx) {
   const d = {};
   d.master = ctx.createGain(); d.master.gain.value = AT.tat ? 0 : 0.7;
-  d.nen = ctx.createDynamicsCompressor(); // chống vỡ tiếng khi 3 lớp cộng dồn
+  d.nen = ctx.createDynamicsCompressor(); // chống vỡ tiếng khi các lớp cộng dồn
   d.nen.threshold.value = -10; d.nen.knee.value = 12; d.nen.ratio.value = 5; d.nen.attack.value = 0.005; d.nen.release.value = 0.25;
   d.master.connect(d.nen); d.nen.connect(ctx.destination);
-  d.lop = ctx.createBiquadFilter(); d.lop.type = "lowpass"; d.lop.frequency.value = 6000; d.lop.Q.value = 0.6;
+  d.lop = ctx.createBiquadFilter(); d.lop.type = "lowpass"; d.lop.frequency.value = 6000; d.lop.Q.value = 0.6; // độ sáng piano CỐ ĐỊNH (nhiệt độ giờ do tiếng dế biểu diễn)
   d.piano = ctx.createGain(); d.piano.gain.value = 0; d.lop.connect(d.piano); d.piano.connect(d.master);
   d.mua = ctx.createGain(); d.mua.gain.value = 0; d.mua.connect(d.master);
   d.gio = ctx.createGain(); d.gio.gain.value = 0; d.gio.connect(d.master);
+  d.de = ctx.createGain(); d.de.gain.value = 0; d.de.connect(d.master);   // tiếng dế = nhiệt độ
+  d.sam = ctx.createGain(); d.sam.gain.value = 0; d.sam.connect(d.master); // tiếng sấm (mưa to)
   return d;
 }
 async function batAmThanhTG() {
@@ -2660,15 +2776,15 @@ async function batAmThanhTG() {
   await taiByteAmThanhTG();
   await hoiSinh;
   if (ctx.state !== "running") throw new Error("Trình duyệt chưa cho phát âm thanh");
-  const kq = await Promise.all(["piano", "mua", "gio"].map(function (t) { return giaiMaAmThanhTG(ctx, AT.bytes[t]); }));
+  const kq = await Promise.all(["piano", "mua", "gio", "sam", "de"].map(function (t) { return giaiMaAmThanhTG(ctx, AT.bytes[t]); }));
   if (THOI_GIAN.id === null) return; // người chơi đã thoát trong lúc chuẩn bị
-  AT.ctx = ctx; AT.buf = { piano: kq[0], mua: kq[1], gio: kq[2] }; AT.do = dungDoThiAmThanhTG(ctx);
+  AT.ctx = ctx; AT.buf = { piano: kq[0], mua: kq[1], gio: kq[2], sam: kq[3], de: kq[4] }; AT.do = dungDoThiAmThanhTG(ctx);
   const lap = function (b, g) { const s = ctx.createBufferSource(); s.buffer = b; s.loop = true; s.connect(g); s.start(); return s; };
   AT.nguonMua = lap(AT.buf.mua, AT.do.mua); AT.nguonGio = lap(AT.buf.gio, AT.do.gio);
-  AT.lichSu = []; AT.hienThi = []; AT.pianoTT = null; AT.dangBat = true;
+  AT.lichSu = []; AT.hienThi = []; AT.pianoTT = null; AT.deTiep = ctx.currentTime + 0.3; AT.deUltim = ctx.currentTime; AT.deTT = { cuoi: -1 }; AT.samCuoi = 0; AT.dangBat = true;
   ctx.onstatechange = xuLyDoiTrangThaiAmThanhTG;
   AT.tiepTheo = ctx.currentTime + 0.15; lenLichPianoTG(ctx.currentTime + 1.6);
-  AT.hen = setInterval(function () { lenLichPianoTG(ctx.currentTime + 1.6); }, 150);
+  AT.hen = setInterval(function () { lenLichPianoTG(ctx.currentTime + 1.6); lenLichDeSamTG(ctx.currentTime + 1.6); }, 150);
   AT.henMuc = setInterval(apDungMucAmThanhTG, 80);
   apDungMucAmThanhTG(); capNhatTTAmThanhTG();
 }
@@ -2683,7 +2799,7 @@ function tatAmThanhTG() { // dừng hẳn, giải phóng bộ nhớ giải mã; 
   if (AT.henMuc) clearInterval(AT.henMuc);
   AT.hen = AT.henMuc = null;
   const ctx = AT.ctx, d = AT.do, nguon = [AT.nguonMua, AT.nguonGio];
-  AT.dangBat = false; AT.hienThi = []; AT.lichSu = []; AT.pianoTT = null;
+  AT.dangBat = false; AT.hienThi = []; AT.lichSu = []; AT.pianoTT = null; AT.deTiep = 0; AT.deUltim = 0; AT.deTT = { cuoi: -1 }; AT.samCuoi = 0; AT.deDong = "";
   AT.nguonMua = AT.nguonGio = null; AT.do = null; AT.buf = null;
   if (ctx) ctx.onstatechange = null;
   if (AT.tt === "ngat") AT.tt = AT.bytes ? "sansang" : "";
@@ -2708,14 +2824,19 @@ function giaTriMuotTG(k, vt) { // nội suy giữa 2 tháng để âm thanh đ�
 function apDungMucAmThanhTG() {
   if (!AT.dangBat || !AT.do || !THOI_GIAN.chuoi) return;
   const ctx = AT.ctx, d = AT.do, vt = THOI_GIAN.vt, t = ctx.currentTime;
-  const muc = function (x) { return Math.pow(10, (-42 + 42 * Math.pow(x, 0.8)) / 20); }; // -42..0 dB
+  const muc = function (x) { return Math.pow(10, (-42 + 42 * Math.pow(x, 0.8)) / 20); }; // -42..0 dB (gió: thang theo từng nơi)
   const hs = AT.volNen * AT.volNen;
-  d.mua.gain.setTargetAtTime((AT.nen === "rain" || AT.nen === "both") ? muc(chuanHoaTG("P", giaTriMuotTG("P", vt))) * hs : 0, t, 0.12);
+  const mm = giaTriMuotTG("P", vt), tC = giaTriMuotTG("T", vt);
+  // MƯA: thang CHUNG cho mọi nơi (mm/ngày -> dB), không chuẩn hóa theo từng nơi
+  d.mua.gain.setTargetAtTime((AT.nen === "rain" || AT.nen === "both") ? heSoMua(mm) * hs : 0, t, 0.12);
   d.gio.gain.setTargetAtTime((AT.nen === "wind" || AT.nen === "both") ? muc(chuanHoaTG("W", giaTriMuotTG("W", vt))) * hs : 0, t, 0.12);
   d.piano.gain.setTargetAtTime(AT.pianoBat ? AT.volPiano * AT.volPiano : 0, t, 0.12);
-  d.lop.frequency.setTargetAtTime(1200 * Math.pow(9000 / 1200, chuanHoaTG("T", giaTriMuotTG("T", vt))), t, 0.25);
+  d.de.gain.setTargetAtTime(AT.deBat ? AT.volDe * AT.volDe : 0, t, 0.05);
+  d.sam.gain.setTargetAtTime((AT.nen === "rain" || AT.nen === "both") ? hs : 0, t, 0.05);
   let doi = false;
   while (AT.hienThi.length && AT.hienThi[0].t <= t) { AT.pianoTT = AT.hienThi.shift(); doi = true; }
+  const r = tocDoDeTuNhiet(tC), dong = r > 0 ? T("tg_de_tt", { r: r.toFixed(1).replace(".", ","), t: tC.toFixed(0) }) : T("tg_de_im");
+  if (dong !== AT.deDong) { AT.deDong = dong; doi = true; }
   if (doi) capNhatTTAmThanhTG();
 }
 function chonDoanPianoTG(muc) { // muc 0..1 = độ sôi động mong muốn -> chỉ số đoạn; tránh lặp 6 đoạn gần nhất
@@ -2743,9 +2864,33 @@ function lenLichPianoTG(den) { // xếp các đoạn piano nối tiếp nhau tr�
     phatDoanPianoTG(i, AT.tiepTheo); AT.tiepTheo += AT.doan[i].b - AT.doan[i].a;
   }
 }
+// Lên lịch tiếng dế (nhịp theo định luật Dolbear từ nhiệt độ THẬT của tháng) và tiếng sấm (chỉ khi mưa to), theo đồng hồ của AudioContext.
+function lenLichDeSamTG(den) {
+  if (!AT.dangBat || !AT.do || !AT.buf || !AT.dsDe || !THOI_GIAN.chuoi) return;
+  const ctx = AT.ctx; if (ctx.state !== "running") return;
+  const now = ctx.currentTime, vt = THOI_GIAN.vt;
+  const r = tocDoDeTuNhiet(giaTriMuotTG("T", vt));
+  if (!AT.deBat || r < 0.02) {
+    AT.deTiep = now + 0.3; AT.deUltim = now;       // trời quá lạnh hoặc đã tắt dế: chờ, kiểm tra lại sau
+  } else {
+    // nhiệt độ vừa tăng mạnh: không phải chờ nhịp cũ rất chậm. Chỉ kéo sớm lại khi nhịp đã định dài hơn hẳn nhịp mới
+    // (quá 1,6 lần), và không bao giờ sớm hơn tiếng dế đã lên lịch gần nhất, nên không có tiếng nào bị lên lịch hai lần.
+    if (AT.deTiep - AT.deUltim > 1.6 / r) AT.deTiep = Math.max(AT.deUltim + 1 / r, now + 0.02);
+    while (AT.deTiep < den) {
+      phatMotTiengDe(ctx, AT.do.de, AT.buf.de, AT.dsDe, Math.max(AT.deTiep, now + 0.02), 0.9, AT.deTT);
+      AT.deUltim = AT.deTiep;
+      AT.deTiep += (1 / r) * (0.8 + 0.4 * Math.random());
+    }
+  }
+  const nhip = nhipSamMoiPhut(giaTriMuotTG("P", vt));
+  if (nhip > 0 && (AT.nen === "rain" || AT.nen === "both") && now - AT.samCuoi > 6 && Math.random() < nhip / 60 * 0.15) {
+    AT.samCuoi = now; phatMotTiengSam(ctx, AT.do.sam, AT.buf.sam, AT.dsSam, now + 0.1, 0.5 + 0.5 * Math.min(1, (giaTriMuotTG("P", vt) - 8) / 17));
+  }
+}
 function capNhatTTAmThanhTG() {
-  const a = document.getElementById("tg-amthanh-tt"), p = document.getElementById("tg-piano-tt");
+  const a = document.getElementById("tg-amthanh-tt"), p = document.getElementById("tg-piano-tt"), de = document.getElementById("tg-de-tt");
   if (!a || !p) return;
+  if (de) de.textContent = AT.dangBat ? AT.deDong : "";
   a.textContent = AT.tt === "ngat" ? T("tg_amthanh_ngat") : AT.dangBat ? "" : AT.tt === "dangtai" ? T("tg_amthanh_dangtai") : AT.tt === "sansang" ? T("tg_amthanh_sansang") :
     AT.tt === "loi" ? T("tg_amthanh_loi") : "";
   p.textContent = AT.dangBat && AT.pianoTT && AT.doan ? T("tg_piano_tt", { i: AT.pianoTT.i + 1, n: AT.doan.length, p: AT.pianoTT.p }) : "";
@@ -2758,6 +2903,8 @@ function doiMixTG() {
   AT.pianoBat = document.getElementById("tg-piano-bat").checked;
   AT.volPiano = document.getElementById("tg-vol-piano").value / 100;
   AT.volNen = document.getElementById("tg-vol-nen").value / 100;
+  AT.deBat = document.getElementById("tg-de-bat").checked;
+  AT.volDe = document.getElementById("tg-vol-de").value / 100;
   apDungMucAmThanhTG();
 }
 function batTatTiengTG() {

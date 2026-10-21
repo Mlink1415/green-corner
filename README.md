@@ -23,15 +23,21 @@ Cụ thể app đã làm:
 - **Khung hình EIC thật** — mỗi lần chọn 1 địa điểm, app lấy đúng ảnh vệ tinh
   MODIS từ NASA Worldview/GIBS, **đúng ngày** với dữ liệu đang sonify hoá, thay
   vì dùng hình minh hoạ.
-- **Luồng chính: âm thanh tổng hợp bằng thuật toán** (Web Audio API), không dùng
-  file nhạc có sẵn — cao độ, âm sắc, mật độ tiếng mưa đều tính **trực tiếp và
-  liên tục** từ giá trị NASA thật (không chỉ ép về 3 mức Thấp/Vừa/Cao cố
-  định), cộng thêm 1 nốt "bè" báo xu hướng tăng/giảm so với lần đo trước.
-- **Màn "Khám phá theo thời gian": âm thanh từ thư viện miễn phí Pixabay** —
-  nhạc piano, tiếng mưa và tiếng gió rừng. Số liệu NASA theo tháng
-  (2006 đến 6/2026) **chọn đoạn piano nào phát tiếp**, làm tiếng đàn sáng hơn
-  khi nóng hơn, và làm tiếng mưa/gió to hơn khi mưa/gió mạnh hơn, theo thời
-  gian thực khi kéo thanh thời gian.
+- **Mỗi loại số liệu có một loại âm riêng, ở cả hai luồng:**
+  - **Nhiệt độ = tiếng dế.** Nhịp kêu theo **định luật Dolbear** (°F ≈ số tiếng
+    dế trong 15 giây + 40): khoảng 0,7 tiếng/giây ở 10 °C, 1,9 ở 20 °C, 3,1 ở
+    30 °C; dưới ~4,4 °C dế im. Dế là động vật máu lạnh nên trời ấm kêu nhanh
+    hơn. Công thức chỉ gần đúng và hợp nhất với một số loài dế.
+  - **Lượng mưa = tiếng mưa thật + sấm.** Mưa to dần theo mm/ngày (từ ~−30 dB
+    đến 0 dB, 0 mm là im); từ 8 mm/ngày trở lên có thêm tiếng sấm.
+  - **Hai thứ trên dùng MỘT THANG CHUNG cho mọi nơi trên Trái Đất** (tính bằng
+    °C và mm/ngày tuyệt đối, không chuẩn hoá theo từng nơi): cùng 20 °C thì
+    Hà Nội và Phoenix kêu như nhau.
+  - **Phủ xanh (NDVI):** luồng theo địa điểm dùng giai điệu 3 mức tổng hợp bằng
+    Web Audio (cao độ tinh chỉnh theo giá trị thật, nốt "bè" báo xu hướng);
+    màn theo thời gian dùng đoạn piano (độ xanh càng cao càng sôi động).
+  - **Gió (chỉ màn theo thời gian):** tiếng gió rừng to dần theo tốc độ gió
+    (thang theo từng nơi).
 
 ## Hướng dẫn chơi
 
@@ -122,6 +128,7 @@ NODE_PATH=<...> node tools/audit_en.js                             # rà chữ t
 NODE_PATH=<...> node tools/test_doc.js                              # nút Nghe đọc (giọng giả): ẩn/hiện, văn bản đọc, tự dừng
 NODE_PATH=<...> node tools/test_noi.js                              # thẻ "Về nơi này": đối chiếu số với số liệu gốc
 NODE_PATH=<...> node tools/test_loi.js                             # thẻ lời song ngữ
+NODE_PATH=<...> node tools/test_dem_mua.js                          # dế (nhiệt độ) + mưa/sấm theo thang chung, cả hai luồng
 NODE_PATH=<...> node tools/test_s5.js                              # toàn diện: điện thoại, mạng chậm, bộ nhớ, luồng cũ
 ```
 
@@ -129,17 +136,28 @@ NODE_PATH=<...> node tools/test_s5.js                              # toàn diệ
 
 Trang web thuần HTML/CSS/JS (`index.html`) — không framework, không bước build,
 không thư viện ngoài. Chạy trực tiếp trên trình duyệt, kể cả trên điện thoại.
-Luồng chính dùng Web Audio API tự tổng hợp (oscillator + filter). Màn "Khám phá
-theo thời gian" tải lười (khi vào màn) thêm khoảng 4 MB: `assets/audio/` (piano,
-mưa, gió) và `data/` (số liệu tháng, danh sách đoạn piano); lỗi tải thì màn vẫn
-xem được biểu đồ không tiếng.
+Âm thanh dùng Web Audio API: giai điệu phủ xanh tổng hợp trực tiếp; tiếng dế, mưa,
+sấm phát từ các bản thu (`assets/audio/`: `cricket-chirps.wav` 24 tiếng dế rời,
+`rain-loop-v2.wav` vòng mưa 40 giây, `thunder.wav` 4 clip sấm) cùng danh sách clip
+`data/cricket-chirps.json`, `data/thunder-clips.json`. Màn "Khám phá theo thời
+gian" tải lười (khi vào màn) thêm khoảng 6 MB (piano, gió, mưa, sấm, dế và số
+liệu tháng); luồng theo địa điểm tải trước ~3,4 MB (mưa, sấm, dế) khi vào màn
+Lắng nghe. Lỗi tải thì màn thời gian vẫn xem được biểu đồ không tiếng và luồng
+theo địa điểm tự dùng giai điệu cũ. Cách tạo lại các file âm thanh mưa, sấm, dế:
+`python3 tools/build_dem_mua_assets.py --nguon <thư-mục-bản-thu> --ra <thư-mục-ra>`.
 
 ## Ghi nhận
 
-Dữ liệu: NASA POWER, NASA MODIS (qua ORNL DAAC), NASA Worldview/GIBS. Âm thanh
-ở màn "Khám phá theo thời gian" (nhạc piano, tiếng mưa, tiếng gió rừng) tải từ
+Dữ liệu: NASA POWER, NASA MODIS (qua ORNL DAAC), NASA Worldview/GIBS. Âm thanh:
+nhạc piano và tiếng gió rừng ở màn "Khám phá theo thời gian" tải từ
 [Pixabay](https://pixabay.com/vi/music/), dùng theo
-[Pixabay Content License](https://pixabay.com/service/license-summary/).
+[Pixabay Content License](https://pixabay.com/service/license-summary/); tiếng
+mưa, sấm ("Rain and Thumb") và tiếng dế ("Cricket sound") là bản thu do nhóm cung
+cấp (nguồn chi tiết sẽ được ghi thêm).
+
+Cơ sở khoa học của tiếng dế: định luật Dolbear (1897) — nhịp kêu của dế tăng theo
+nhiệt độ; xem [NOAA: Can crickets tell temperature?](https://www.noaa.gov/office-of-education/explainers/can-crickets-tell-temperature-answer-is-in-their-chirp)
+và [Singing Insects of North America (dế cây tuyết)](https://orthsoc.org/sina/585a.htm).
 
 ---
 
@@ -149,11 +167,13 @@ Dữ liệu: NASA POWER, NASA MODIS (qua ORNL DAAC), NASA Worldview/GIBS. Âm th
 rainfall) into procedurally-generated sound and drawings, built for NASA
 Space Apps Challenge 2026's *"The Earth Information Jukebox"*. It pairs a
 real NASA satellite image (Worldview/GIBS, matched to the exact date of the
-data) with sound synthesized live from that data's actual values — not a
-fixed 3-level lookup, and not pre-made music files in the main flow. A second screen, *"Explore
-through time"*, lets players drag through 20+ years of monthly NASA data
-(NDVI, temperature, rainfall, wind) for six places: the data picks which
-part of the piano music plays next, brightens the piano when it's hotter, and
-turns the rain and forest wind sounds up or down (audio from Pixabay) —
+data) with sound driven by that data's actual values. Each kind of data has its
+own kind of sound, on one shared scale for every place on Earth: **temperature
+is cricket chirps** (rate follows Dolbear's law, silent below ~4 °C) and
+**rainfall is a real rain recording plus thunder** (louder with more rain, thunder
+from 8 mm/day). A second screen, *"Explore through time"*, lets players drag
+through 20+ years of monthly NASA data (NDVI, temperature, rainfall, wind) for six
+places: NDVI picks which part of the piano music plays next, and wind turns the
+forest wind sound up or down —
 with bilingual (Vietnamese/English) explanations. Live demo above; plain
 static HTML, no build step, no dependencies.

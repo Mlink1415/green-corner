@@ -26,7 +26,7 @@ async function batDauPhat(page) {
 }
 const ganDoThi = page => page.evaluate(() => { window.__an = AT.ctx.createAnalyser(); window.__an.fftSize = 2048; AT.do.nen.connect(window.__an); });
 const dat = (page, o) => page.evaluate(o => {
-  document.getElementById('tg-nen').value = o.nen; document.getElementById('tg-piano-bat').checked = o.piano;
+  document.getElementById('tg-nen').value = o.nen; document.getElementById('tg-piano-bat').checked = o.piano; document.getElementById('tg-de-bat').checked = !!o.de;
   document.getElementById('tg-vol-piano').value = o.vp == null ? 80 : o.vp; document.getElementById('tg-vol-nen').value = o.vn == null ? 80 : o.vn;
   doiMixTG(); datViTriTG(o.vt);
 }, o);
@@ -42,13 +42,13 @@ const medir = (page, ms) => page.evaluate(async ms => {
   const page = await ctx.newPage(); const issues = [], reqs = {};
   page.on('console', m => { if (m.type() === 'error') issues.push(m.text()); });
   page.on('pageerror', e => issues.push('pageerror: ' + e.message));
-  page.on('request', r => { const u = r.url(); if (/assets\/audio|piano-slices/.test(u)) reqs[u.split('/').pop()] = (reqs[u.split('/').pop()] || 0) + 1; });
+  page.on('request', r => { const u = r.url(); if (/assets\/audio|piano-slices/.test(u)) reqs[u.split('/').pop()] = (reqs[u.split('/').pop()] || 0) + 1; });  // (đếm cả vòng mưa, sấm, dế)
   await page.goto(URL, { waitUntil: 'load' });
 
   // 1. Tài nguyên có thật, đủ nhỏ
   let tong = 0;
-  for (const f of ['assets/audio/piano.mp3', 'assets/audio/rain-loop.wav', 'assets/audio/wind-loop-B.wav', 'data/piano-slices.json']) {
-    const r = await ctx.request.get(URL + f); const b = (await r.body()).length; tong += b; ok(r.status() === 200 && b > 500, f + ' -> HTTP ' + r.status() + ', ' + (b / 1024).toFixed(0) + ' KB');
+  for (const f of ['assets/audio/piano.mp3', 'assets/audio/rain-loop-v2.wav', 'assets/audio/thunder.wav', 'assets/audio/cricket-chirps.wav', 'assets/audio/wind-loop-B.wav', 'data/piano-slices.json', 'data/cricket-chirps.json', 'data/thunder-clips.json']) {
+    const r = await ctx.request.get(new (require('url').URL)('./', URL).href + f); const b = (await r.body()).length; tong += b; ok(r.status() === 200 && b > (f.endsWith('.json') ? 20 : 500), f + ' -> HTTP ' + r.status() + ', ' + (b / 1024).toFixed(0) + ' KB');
   }
   ok(tong < 8 * 1024 * 1024, 'Tổng dung lượng âm thanh ' + (tong / 1048576).toFixed(2) + ' MB (ngưỡng 8 MB)');
 
@@ -61,12 +61,13 @@ const medir = (page, ms) => page.evaluate(async ms => {
   // 3. Bấm Phát: giải mã + dựng chuỗi nút + chạy
   await batDauPhat(page);
   const st = await page.evaluate(() => ({ bat: AT.dangBat, state: AT.ctx.state, sr: AT.ctx.sampleRate,
-    dur: { p: AT.buf.piano.duration, m: AT.buf.mua.duration, g: AT.buf.gio.duration },
-    mb: (['piano', 'mua', 'gio'].reduce((t, k) => t + AT.buf[k].length * AT.buf[k].numberOfChannels * 4, 0) / 1048576) }));
+    dur: { p: AT.buf.piano.duration, m: AT.buf.mua.duration, g: AT.buf.gio.duration, s: AT.buf.sam.duration, d: AT.buf.de.duration },
+    mb: (['piano', 'mua', 'gio', 'sam', 'de'].reduce((t, k) => t + AT.buf[k].length * AT.buf[k].numberOfChannels * 4, 0) / 1048576) }));
   ok(st.bat && st.state === 'running', 'Phát: AudioContext đang chạy (' + st.sr + ' Hz)');
-  ok(Math.abs(st.dur.p - 118.2) < 1 && Math.abs(st.dur.m - 33) < 0.5 && Math.abs(st.dur.g - 40) < 0.5,
-     'Độ dài giải mã đúng: piano ' + st.dur.p.toFixed(1) + 's, mưa ' + st.dur.m.toFixed(1) + 's, gió ' + st.dur.g.toFixed(1) + 's');
-  console.log('INFO RAM giải mã ~' + st.mb.toFixed(0) + ' MB (rất nhẹ so với bản gốc 300 MB)');
+  ok(Math.abs(st.dur.p - 118.2) < 1 && Math.abs(st.dur.m - 40) < 0.5 && Math.abs(st.dur.g - 40) < 0.5 && Math.abs(st.dur.s - 31.4) < 0.5 && Math.abs(st.dur.d - 5.84) < 0.2,
+     'Độ dài giải mã đúng: piano ' + st.dur.p.toFixed(1) + 's, mưa ' + st.dur.m.toFixed(1) + 's, gió ' + st.dur.g.toFixed(1) + 's, sấm ' + st.dur.s.toFixed(1) + 's, dế ' + st.dur.d.toFixed(2) + 's');
+  console.log('INFO RAM giải mã ~' + st.mb.toFixed(0) + ' MB (bản gốc ban đầu 300 MB)');
+  ok(st.mb < 60, 'RAM giải mã dưới 60 MB (' + st.mb.toFixed(0) + ' MB)');
   await ganDoThi(page);
 
   // 4. Dữ liệu điều khiển âm thanh đúng hướng (đo thật)
@@ -76,15 +77,21 @@ const medir = (page, ms) => page.evaluate(async ms => {
   await dat(page, { nen: 'wind', piano: false, vt: M.windy }); await doi(1500); const gW = await medir(page, 1200);
   await dat(page, { nen: 'wind', piano: false, vt: M.calm }); await doi(1800); const gC = await medir(page, 1200);
   ok(gW.rms - gC.rms > 15, 'Gió: tháng gió mạnh nhất to hơn tháng lặng nhất ' + (gW.rms - gC.rms).toFixed(1) + ' dB (cần > 15)');
-  await dat(page, { nen: 'wind', piano: true, vt: M.cold }); await doi(1800); const fCold = await page.evaluate(() => AT.do.lop.frequency.value);
-  await dat(page, { nen: 'wind', piano: true, vt: M.hot }); await doi(1800); const fHot = await page.evaluate(() => AT.do.lop.frequency.value);
-  ok(fHot / fCold > 2.5, 'Piano sáng hơn khi nóng: bộ lọc ' + fCold.toFixed(0) + ' Hz (lạnh) -> ' + fHot.toFixed(0) + ' Hz (nóng)');
+  // Nhiệt độ = tiếng DẾ (thang chung, định luật Dolbear); bộ lọc piano không còn đổi theo nhiệt độ
+  await page.evaluate(() => { window.__de = 0; const g = phatMotTiengDe; window.phatMotTiengDe = function () { window.__de++; return g.apply(this, arguments); }; });
+  const demDe = async (vt) => { await dat(page, { nen: 'wind', piano: false, de: true, vt }); await doi(800); await page.evaluate(() => { window.__de = 0; }); await doi(6000); return page.evaluate(() => window.__de); };
+  const dLanh = await demDe(M.cold), dNong = await demDe(M.hot);
+  const rr = t => Math.max(0, (1.8 * t - 8) / 15);
+  ok(dNong > dLanh * 2 && Math.abs(dNong - rr(S.T[M.hot]) * 6) <= Math.max(2, rr(S.T[M.hot]) * 6 * 0.3), 'Dế: tháng nóng nhất (' + S.T[M.hot].toFixed(1) + ' °C) kêu ' + dNong + ' tiếng/6 s, tháng lạnh nhất (' + S.T[M.cold].toFixed(1) + ' °C) kêu ' + dLanh + ' (đúng định luật Dolbear)');
+  await dat(page, { nen: 'wind', piano: true, de: false, vt: M.cold }); await doi(1500); const fCold = await page.evaluate(() => AT.do.lop.frequency.value);
+  await dat(page, { nen: 'wind', piano: true, de: false, vt: M.hot }); await doi(1500); const fHot = await page.evaluate(() => AT.do.lop.frequency.value);
+  ok(Math.abs(fHot - fCold) < 1, 'Piano không còn đổi độ sáng theo nhiệt độ (cố định ' + fCold.toFixed(0) + ' Hz): nhiệt độ do tiếng dế biểu diễn');
   const pick = await page.evaluate(() => { const lay = m => { let t = 0; for (let i = 0; i < 40; i++) { AT.lichSu = []; t += AT.doan[chonDoanPianoTG(m)].r; } return t / 40; }; return { cao: lay(0.95), thap: lay(0.05) }; });
   ok(pick.cao > 0.75 && pick.thap < 0.25, 'NDVI chọn đoạn piano: NDVI cao -> độ sôi động TB ' + pick.cao.toFixed(2) + ', NDVI thấp -> ' + pick.thap.toFixed(2));
 
   // 5. Đỉnh âm khi mở hết cỡ
-  await dat(page, { nen: 'both', piano: true, vp: 100, vn: 100, vt: M.wet }); await doi(2000); const mx = await medir(page, 6000);
-  ok(mx.peak < -1, 'Mở hết cỡ (piano + mưa + gió): đỉnh ' + mx.peak.toFixed(1) + ' dBFS (cần < -1), RMS ' + mx.rms.toFixed(1) + ' dBFS');
+  await dat(page, { nen: 'both', piano: true, de: true, vp: 100, vn: 100, vt: M.wet }); await page.evaluate(() => { document.getElementById('tg-vol-de').value = 100; doiMixTG(); }); await doi(2000); const mx = await medir(page, 6000);
+  ok(mx.peak < -1, 'Mở hết cỡ (piano + mưa + gió + dế + sấm): đỉnh ' + mx.peak.toFixed(1) + ' dBFS (cần < -1), RMS ' + mx.rms.toFixed(1) + ' dBFS');
   ok((await page.textContent('#tg-piano-tt')).includes('Đoạn piano'), 'Dòng "Đoạn piano x/30" hiện khi đang phát');
 
   // 6. Tắt tiếng / bật tiếng
@@ -120,7 +127,7 @@ const medir = (page, ms) => page.evaluate(async ms => {
   const an = await page.evaluate(() => 1);
   await page.click('#man-thoigian .home-btn:first-of-type'); await doi(1200);
   const ra = await page.evaluate(() => ({ bat: AT.dangBat, do: AT.do, buf: AT.buf, hen: AT.hen, henMuc: AT.henMuc, ng: AT.nguonMua }));
-  ok(!ra.bat && ra.do === null && ra.buf === null && ra.hen === null && ra.henMuc === null && ra.ng === null, 'Thoát màn: tắt hẳn, bỏ bộ đệm giải mã, dừng cả 2 đồng hồ');
+  ok(!ra.bat && ra.do === null && ra.buf === null && ra.hen === null && ra.henMuc === null && ra.ng === null && await page.evaluate(() => AT.deTiep === 0 && AT.samCuoi === 0), 'Thoát màn: tắt hẳn, bỏ bộ đệm giải mã, dừng cả 2 đồng hồ, dọn lịch dế và sấm');
   const lang = await medir(page, 800);
   ok(lang.rms < -80, 'Sau khi thoát: đầu ra im lặng (' + lang.rms.toFixed(0) + ' dBFS)');
 
@@ -142,7 +149,7 @@ const medir = (page, ms) => page.evaluate(async ms => {
   // 12. Mất 1 file âm thanh: vẫn xem được biểu đồ, bấm lại thì thử tải lại
   const p2 = await ctx.newPage(); const e2 = [], l2 = [];
   p2.on('pageerror', e => e2.push(e.message)); p2.on('console', m => { if (m.type() === 'error') l2.push(m.text()); });
-  await p2.route('**/assets/audio/rain-loop.wav', r => r.abort());
+  await p2.route('**/assets/audio/rain-loop-v2.wav', r => r.abort());
   await p2.goto(URL, { waitUntil: 'load' });
   await vaoManHinh(p2);
   await p2.waitForFunction(() => AT.tt === 'loi', null, { timeout: 20000 });
@@ -152,7 +159,7 @@ const medir = (page, ms) => page.evaluate(async ms => {
   const vA = await p2.evaluate(() => THOI_GIAN.vt); await doi(900);
   const vB = await p2.evaluate(() => THOI_GIAN.vt);
   ok(vB > vA && await p2.evaluate(() => !AT.dangBat), 'Thiếu file: biểu đồ vẫn chạy không tiếng (vị trí ' + vA.toFixed(1) + ' -> ' + vB.toFixed(1) + ')');
-  await p2.click('#tg-nut-phat'); await p2.unroute('**/assets/audio/rain-loop.wav');
+  await p2.click('#tg-nut-phat'); await p2.unroute('**/assets/audio/rain-loop-v2.wav');
   await p2.click('#tg-nut-phat');
   await p2.waitForFunction(() => AT.dangBat === true, null, { timeout: 40000 });
   ok(true, 'Có lại file: bấm Phát thì tải lại và có tiếng');

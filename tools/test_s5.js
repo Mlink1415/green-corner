@@ -74,6 +74,7 @@ const PHAN = {
       await page.touchscreen.tap(bd.x + bd.width * 0.25, bd.y + bd.height / 2);
       const vt = await page.evaluate(() => THOI_GIAN.vt), mong = (SER.hanoi.n - 1) * 0.25;
       ok(Math.abs(vt - mong) < 6, w + 'x' + h + ': chạm vào biểu đồ 25% -> vị trí ' + vt.toFixed(1) + ' (mong ~' + mong.toFixed(0) + ')');
+      await page.locator('#tg-nut-phat').scrollIntoViewIfNeeded(); // người chơi cuộn lại tới nút Phát (các dòng chữ phía trên có thể làm nút nằm ngoài khung nhìn)
       const nut = await page.locator('#tg-nut-phat').boundingBox(), nTat = await page.locator('#tg-nut-tat').boundingBox();
       ok(nut.height >= 40 && nTat.height >= 40, w + 'x' + h + ': nút Phát/Tắt tiếng đủ lớn để chạm (' + nut.height.toFixed(0) + ' / ' + nTat.height.toFixed(0) + ' px)');
       await page.touchscreen.tap(nut.x + nut.width / 2, nut.y + nut.height / 2);
